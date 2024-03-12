@@ -1,0 +1,3 @@
+C:/Users/pshih/Desktop/Data Stractures Winter 23-24/wet2-new-2024/cmake-build-debug/CMakeFiles/wet2_new_2024.dir
+C:/Users/pshih/Desktop/Data Stractures Winter 23-24/wet2-new-2024/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/pshih/Desktop/Data Stractures Winter 23-24/wet2-new-2024/cmake-build-debug/CMakeFiles/rebuild_cache.dir
