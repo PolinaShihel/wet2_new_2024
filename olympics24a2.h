@@ -23,7 +23,7 @@
 
 class olympics_t {
 private:
-    hashTable<Team, int> teamsHash;
+    hashTable<Team*, int> teamsHash;
     int highest_ranked_team_id;
     int number_of_teams;
     RankTree<Team*,StrCond> teamsTree;
