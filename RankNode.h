@@ -9,6 +9,9 @@
 #define RL 1
 #define empty 0
 #define null_height -1
+#define LEFT 3
+#define RIGHT 4
+#define NO_DIRECT 5
 
 class KeyExists : public std::exception {
 };
@@ -23,12 +26,13 @@ class RankNode {
     int height;
     T data;
     int rank;
+    int extra;
 
 public:
     RankNode(Cond key, T data): key(key), right(nullptr),left(nullptr), height(0),
-                                data(data), rank(1){};
+                                data(data), rank(1),extra(0){};
     RankNode(Cond key, T data,int rank): key(key), right(nullptr),left(nullptr), height(0),
-                                         data(data),rank(rank){};
+                                         data(data),rank(rank),extra(0){};
     RankNode *insertNode(const Cond &key, const T &data);
     RankNode *deleteNode(const Cond &newKey);
     RankNode *findNode(const Cond &newKey);
@@ -54,8 +58,10 @@ public:
     int balanceFactor() const;
     void calcHeight();
     RankNode *isExist(const Cond &newKey);
-    void setRank(int rank);
+    //void setRank(int rank);
     int getRank();
+    void AddExtra(int end, int toAdd);
+    void AddExtraAux(int end, int toAdd, int prevDirection);
 };
 
 template<class T, class Cond>
@@ -71,20 +77,22 @@ RankNode<T,Cond> *RankNode<T,Cond>::insertNode(const Cond &newKey, const T &newD
     }else
         throw KeyExists();
     this->calcHeight();
-    this->setRank(this->getRank()++);
+    this->rank++;
     return this->rotate();
 }
 
-template<class T, class Cond>
-void RankNode<T, Cond>::setRank(int toSet)
-{
-    this->rank = toSet;
-}
-
+//template<class T, class Cond>
+//void RankNode<T, Cond>::setRank(int toSet)
+//{
+//    this->rank = toSet;
+//}
+//
 template<class T, class Cond>
 int RankNode<T, Cond>::getRank()
 {
-    return this->rank;
+    if(this->right == nullptr)
+        return this->rank;
+    return (this->rank - this->right->rank);
 }
 
 template<class T, class Cond>
@@ -98,12 +106,14 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
             throw KeyNotFound();
         this->left = this->left->deleteNode(newKey);
         this->calcHeight();
+        this->rank--;
         return this->rotate();
     } else if (newKey > this->key) {
         if (this->right == nullptr)
             throw KeyNotFound();
         this->right = this->right->deleteNode(newKey);
         this->calcHeight();
+        this->rank--;
         return this->rotate();
     } else {
         if ((this->left == nullptr) && (this->right == nullptr)) {
@@ -120,9 +130,9 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
             delete this;
             return toSwap;
         } else {
-            Node<T, Cond> *temp;
+            RankNode<T, Cond> *temp;
             if (this->left->right != nullptr) {
-                Node<T, Cond> *biggestFather = findBiggestParent(this->left);
+                RankNode<T, Cond> *biggestFather = findBiggestParent(this->left);
                 toSwap = biggestFather->right;
                 temp = toSwap->left;
                 biggestFather->right = this;
@@ -147,7 +157,18 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
 template<class T, class Cond>
 RankNode<T,Cond> *RankNode<T,Cond>::findNode(const Cond &newKey)
 {
-
+    RankNode *result;
+    if (this == nullptr)
+        result = nullptr;
+    else if (this->key == newKey)
+        result = this;
+    else if (this->key < newKey)
+        result = this->right->findNode(newKey);
+    else if (this->key > newKey)
+        result = this->left->findNode(newKey);
+    if (result == nullptr)
+        throw KeyNotFound();
+    return result;
 }
 
 template<class T, class Cond>
@@ -170,10 +191,10 @@ template<class T, class Cond>
 RankNode<T,Cond> *RankNode<T,Cond>::roll_LL()
 {
     RankNode<T, Cond> *temp = left;
-    int AR = temp->right->getRank(), AL = temp->left->getRank();
-    int BR = this->right->getRank();
-    this->setRank(BR + AR + 1);
-    temp->setRank(AL + this->getRank() + 1);
+    int AR = temp->right->rank, AL = temp->left->rank;
+    int BR = this->right->rank;
+    this->rank = BR + AR + 1;
+    temp->rank = AL + this->rank + 1;
     this->left = temp->right;
     temp->right = this;
     this->calcHeight();
@@ -186,10 +207,10 @@ RankNode<T,Cond> *RankNode<T,Cond>::roll_RR()
 {
     RankNode<T, Cond> *temp = right;
     this->right = temp->left;
-    int AL = temp->left->getRank(), AR = temp->right->getRank();
-    int BL = this->left->getRank();
-    this->setRank(AL + BL + 1);
-    temp->setRank(AR + this->getRank() + 1);
+    int AL = temp->left->rank, AR = temp->right->rank;
+    int BL = this->left->rank;
+    this->rank = AL + BL + 1;
+    temp->rank = AR + this->rank + 1;
     temp->left = this;
     this->calcHeight();
     temp->calcHeight();
@@ -281,7 +302,7 @@ void RankNode<T, Cond>::calcHeight() {
 }
 
 template <class T, class Cond>
-Node<T,Cond>* Node<T,Cond>::findBiggestParent(Node *root)
+RankNode<T,Cond>* RankNode<T,Cond>::findBiggestParent(RankNode *root)
 {
     if(root -> right ->right == nullptr)
         return root;
@@ -289,30 +310,15 @@ Node<T,Cond>* Node<T,Cond>::findBiggestParent(Node *root)
 }
 
 template<class T, class Cond>
-void Node<T, Cond>::swap(Node<T, Cond> *source, Node<T, Cond> *destination) {
+void RankNode<T, Cond>::swap(RankNode<T, Cond> *source, RankNode<T, Cond> *destination) {
     destination->right = source->right;
     destination->left = source->left;
 }
 
-template<class T, class Cond>
-Node<T, Cond> *Node<T, Cond>::findNode(const Cond &newKey) {
-    Node *result;
-    if (this == nullptr)
-        result = nullptr;
-    else if (this->key == newKey)
-        result = this;
-    else if (this->key < newKey)
-        result = this->right->findNode(newKey);
-    else if (this->key > newKey)
-        result = this->left->findNode(newKey);
-    if (result == nullptr)
-        throw KeyNotFound();
-    return result;
-}
 
 template<class T, class Cond>
-Node<T, Cond> *Node<T, Cond>::isExist(const Cond &newKey) {
-    Node *result;
+RankNode<T, Cond> *RankNode<T, Cond>::isExist(const Cond &newKey) {
+    RankNode *result;
     if (this == nullptr)
         result = nullptr;
     else if (this->key == newKey)
@@ -325,21 +331,66 @@ Node<T, Cond> *Node<T, Cond>::isExist(const Cond &newKey) {
 }
 
 template<class T, class Cond>
-Node<T, Cond> *Node<T, Cond>::findBiggest() {
+RankNode<T, Cond> *RankNode<T, Cond>::findBiggest() {
     if (this->right == nullptr)
         return this;
     return this->right->findBiggest();
 }
 
 template<class T, class Cond>
-Node<T, Cond> *Node<T, Cond>::findSmallest() {
+RankNode<T, Cond> *RankNode<T, Cond>::findSmallest() {
     if (this->left == nullptr)
         return this;
     return this->left->findSmallest();
 }
 
+template<class T, class Cond>
+void RankNode<T,Cond>::AddExtra(int end, int toAdd)
+{
+    if(this->root == nullptr)
+        throw KeyNotFound();
+    if(this->key < end){
+        this->extra += toAdd;
+        this->right->AddExtraAux(end,toAdd,RIGHT);
+    }
+    else if(this->key > end){
+        this->left->AddExtraAux(end,toAdd,LEFT);
+    }
+    else{//key==end
+        this->extra += toAdd;
+        if(this->right!= nullptr)
+            this->right->extra-=toAdd;
+    }
+}
 
-#endif //WET1_NODE_H
+template<class T, class Cond>
+void RankNode<T,Cond>::AddExtraAux(int end, int toAdd, int prevDirection)
+{
+    if(this == nullptr)
+        throw KeyNotFound();
+    if(this->key < end)
+    {
+        if(prevDirection == RIGHT)
+            this->extra-=toAdd;
+        this->left->AddExtraAux(end, toAdd, LEFT);
+    }
+    else if(this->key > end)
+    {
+        if(prevDirection == LEFT)
+            this->extra+=toAdd;
+        this->right->AddExtraAux(end, toAdd, RIGHT);
+    }
+    else//found
+    {
+        if(prevDirection == LEFT)
+            this->key+=toAdd;
+        if(this->right!= nullptr)
+            this->right->extra-=toAdd;
+    }
+}
+
+
+#endif //WET2_RANKNODE_H
 
 
 
