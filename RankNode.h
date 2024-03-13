@@ -13,10 +13,6 @@
 #define RIGHT 4
 #define NO_DIRECT 5
 
-class KeyExists : public std::exception {
-};
-class KeyNotFound : public std::exception {
-};
 
 template<class T, class Cond>
 class RankNode {
@@ -149,6 +145,10 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
                 swap(this, toSwap);
                 this->right = nullptr;
                 this->left = temp;
+                int tempRank = this->rank;
+                this->rank = toSwap->rank;
+                toSwap->rank = tempRank;
+
             } else {
                 this->right->extra-=this->left->extra;
                 if(this->left->left!= nullptr)
