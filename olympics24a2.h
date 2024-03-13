@@ -17,15 +17,14 @@
 
 #include "wet2util.h"
 #include "hashTable.h"
+#include "AVL_tree.h"
+#include "RankTree.h"
+#include "Team.h"
 
 class olympics_t {
 private:
     hashTable<Team, int> teamsHash;
-
-	//
-	// Here you may add anything you want
-	//
-	
+    int highest_ranked_team_id;
 public:
 	// <DO-NOT-MODIFY> {
 

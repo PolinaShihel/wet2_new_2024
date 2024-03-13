@@ -6,8 +6,12 @@ class Contestant {
     int entry;
     int strength;
 public:
-    Contestant(int entry, int strength):entry(entry), strength(strength){};
+    Contestant(int entry, int strength);
     ~Contestant()=default;
+    Contestant(const Contestant &toCopy) = default;
+    int get_strength();
+    int get_entry();
+    void set_entry(int entry);
 };
 
 

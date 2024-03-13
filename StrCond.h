@@ -4,10 +4,10 @@
 class StrCond
 {
     int Strength;
-    int ID;
+    int entry;
 public:
-    StrCond():Strength(0),ID(0){}
-    StrCond(int Strength, int ID): Strength(Strength),ID(ID){}
+    StrCond():Strength(0),entry(0){}
+    StrCond(int Strength, int entry): Strength(Strength),entry(entry){}
     StrCond(const StrCond& other) = default;
     StrCond& operator=(const StrCond& other) = default;
     ~StrCond() = default;
