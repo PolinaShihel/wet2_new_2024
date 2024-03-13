@@ -36,7 +36,7 @@ bool is_tree_valid(RankNode<Key, Value> *root) {
         return true;
     }
     // Checks the height of every node is valid
-    if (root->getHeight() != 1 + std::max(root->getLeft()->getHeight(), root->getRight()->getHeight())) {
+    if (root->getHeight() != 1 + std::max(getHeight(root->getLeft()), getHeight(root->getRight()))) {
         std::cout << "Height is not valid" << std::endl;
         return false;
     }
@@ -54,12 +54,12 @@ bool is_tree_valid(RankNode<Key, Value> *root) {
         return false;
     }
     //checks that the rank of every node is valid
-    if (root->getWeight() != 1 + root->getLeft()->getWeight() + root->getRight()->getWeight()) {
+    if (root->getWeight() != 1 + getWeight(root->getLeft()) + getWeight(root->getRight())) {
         std::cout << "Rank is not valid" << std::endl;
         return false;
     }
     //checks that the Balance Factor of every node is valid
-    if (std::abs(root->balanceFactor()) > 1) {
+    if (std::abs(BalanceFactor(root)) > 1) {
         std::cout << "Balance Factor is not valid" << std::endl;
         return false;
     }
@@ -115,7 +115,7 @@ int getWeight(RankNode<Key, Value> *root) {
     if (!root) {
         return 0;
     }
-    return root->weight;
+    return root->getWeight();
 }
 
 
@@ -175,14 +175,14 @@ int main(){
             tree.insert(*it,*it);
             assert(is_tree_valid(tree.getRoot()));
             if(is_tree_valid(tree.getRoot())){}
- //           print2D(tree.getRoot());
+            //print2D(tree.getRoot());
         }
         std::cout<<"    Deleting The Tree \n"<<std::endl;
         shuffle (vector.begin(), vector.end(), std::default_random_engine(seed));
         for (std::vector<int>::iterator it = vector.begin() ; it != vector.end(); ++it){
             tree.remove(*it);
             assert(is_tree_valid(tree.getRoot()));
- //           print2D(tree.getRoot());
+            //print2D(tree.getRoot());
 
         }
         if(k != 1){
