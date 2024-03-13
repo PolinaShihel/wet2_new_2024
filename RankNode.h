@@ -11,8 +11,6 @@
 #define null_height -1
 #define LEFT 3
 #define RIGHT 4
-#define NO_DIRECT 5
-
 
 template<class T, class Cond>
 class RankNode {
