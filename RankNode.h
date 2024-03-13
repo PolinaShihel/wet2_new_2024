@@ -131,6 +131,7 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
             return toSwap;
         } else {
             RankNode<T, Cond> *temp;
+            int tempRank;
             if (this->left->right != nullptr) {
                 this->right->extra+=this->extra;
                 this->left->extra+=this->extra;
@@ -145,10 +146,9 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
                 swap(this, toSwap);
                 this->right = nullptr;
                 this->left = temp;
-                int tempRank = this->rank;
+                tempRank = this->rank;
                 this->rank = toSwap->rank;
                 toSwap->rank = tempRank;
-
             } else {
                 this->right->extra-=this->left->extra;
                 if(this->left->left!= nullptr)
@@ -160,10 +160,14 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
                 this->left->right = this->right;
                 this->right = nullptr;
                 this->left = temp;
+                tempRank = toSwap->rank;
+                toSwap->rank = this->rank;
+                thas->rank = tempRank;
             }
         }
         toSwap->left = toSwap->left->deleteNode(newKey);
         toSwap->calcHeight();
+        toSwap->rank--;
         return toSwap->rotate();
     }
 }
