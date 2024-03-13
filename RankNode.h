@@ -60,7 +60,16 @@ public:
     int getWeight();
     void AddExtra(int end, int toAdd);
     void AddExtraAux(int end, int toAdd, int prevDirection);
+    void inOrderTraversal(int depth);
 };
+template<class T,class Cond>
+void RankNode<T,Cond>::inOrderTraversal(int depth) {
+    if(this== nullptr)
+        return;
+    this->left->inOrderTraversal(depth+1);
+    std::cout <<"key: " << this->key <<" rank: "<<this->rank <<" extra: "<<this->extra<<" depth: "<<depth <<std::endl;
+    this->right->inOrderTraversal(depth+1);
+}
 
 template<class T, class Cond>
 int RankNode<T,Cond>::getWeight() {
@@ -391,7 +400,7 @@ RankNode<T, Cond> *RankNode<T, Cond>::findSmallest() {
 template<class T, class Cond>
 void RankNode<T,Cond>::AddExtra(int end, int toAdd)
 {
-    if(this->root == nullptr)
+    if(this == nullptr)
         throw KeyNotFound();
     if(this->key < end){
         this->extra += toAdd;

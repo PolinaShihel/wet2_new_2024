@@ -22,7 +22,23 @@ public:
     RankNode<T,Cond>* getSmallest();
     void fillArray(RankNode<T,Cond>* arr[], int index);
     void fillArrayImpl(RankNode<T, Cond> *node, RankNode<T,Cond>* arr[], int* index);
+    void inOrderTraversal();
+    void addExtra(int end, int toAdd);
 };
+template<class T,class Cond>
+void RankTree<T,Cond>::addExtra(int end, int toAdd)
+{
+    if(this->root== nullptr)
+        return;
+    this->root->AddExtra(end,toAdd);
+}
+
+template<class T,class Cond>
+void RankTree<T,Cond>::inOrderTraversal() {
+    if(this->root == nullptr)
+        return;
+    this->root->inOrderTraversal(1);
+}
 
 template<class T,class Cond>
 RankNode<T,Cond>* RankTree<T,Cond>::sortedArrayTo( RankNode<T, Cond>* arr[],
