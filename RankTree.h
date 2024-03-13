@@ -53,7 +53,7 @@ void RankTree<T,Cond>::insert(const Cond &key,const T& data)
     if(this->root == nullptr)
         this->root =  new RankNode<T,Cond>(key,data);
     else
-        this->root = this->root->insertNode(key,data);
+        this->root = this->root->insertNode(key,data,0);
     this->size++;
     this->smallest = this->getSmallest();
     this->biggest = this->getBiggest();

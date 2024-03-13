@@ -33,7 +33,9 @@ public:
                                 data(data), rank(1),extra(0){};
     RankNode(Cond key, T data,int rank): key(key), right(nullptr),left(nullptr), height(0),
                                          data(data),rank(rank),extra(0){};
-    RankNode *insertNode(const Cond &key, const T &data);
+    RankNode(Cond key, T data,int rank, int extra): key(key), right(nullptr),left(nullptr), height(0),
+                                         data(data),rank(rank),extra(extra){};
+    RankNode *insertNode(const Cond &key, const T &data, int sum);
     RankNode *deleteNode(const Cond &newKey);
     RankNode *findNode(const Cond &newKey);
     //Rotations
@@ -65,10 +67,10 @@ public:
 };
 
 template<class T, class Cond>
-RankNode<T,Cond> *RankNode<T,Cond>::insertNode(const Cond &newKey, const T &newData)
+RankNode<T,Cond> *RankNode<T,Cond>::insertNode(const Cond &newKey, const T &newData, int sum)
 {
     if(this == nullptr){
-        return new RankNode<T, Cond>(newKey, newData);
+        return new RankNode<T, Cond>(newKey, newData, 1, -sum);
     }
     if (this->key < newKey) {
         this->right = this->right->insertNode(newKey, newData);
@@ -191,10 +193,19 @@ template<class T, class Cond>
 RankNode<T,Cond> *RankNode<T,Cond>::roll_LL()
 {
     RankNode<T, Cond> *temp = left;
-    int AR = temp->right->rank, AL = temp->left->rank;
-    int BR = this->right->rank;
+    int AL =0, AR = 0, BR = 0;
+    if(temp->right != nullptr)
+        AR = temp->right->rank;
+    if(temp->left != nullptr)
+        AL = temp->left->rank;
+    if(this->right != nullptr)
+        BR = this->right->rank;
     this->rank = BR + AR + 1;
     temp->rank = AL + this->rank + 1;
+    temp->extra += this->extra;
+    this->extra -= temp->extra;
+    if(temp->right != nullptr)
+        temp->right->extra -= this->extra;
     this->left = temp->right;
     temp->right = this;
     this->calcHeight();
@@ -207,10 +218,19 @@ RankNode<T,Cond> *RankNode<T,Cond>::roll_RR()
 {
     RankNode<T, Cond> *temp = right;
     this->right = temp->left;
-    int AL = temp->left->rank, AR = temp->right->rank;
-    int BL = this->left->rank;
+    int AL =0, AR = 0, BL = 0;
+    if(temp->right != nullptr)
+        AR = temp->right->rank;
+    if(temp->left != nullptr)
+        AL = temp->left->rank;
+    if(this->left != nullptr)
+        BL = this->left->rank;
     this->rank = AL + BL + 1;
     temp->rank = AR + this->rank + 1;
+    temp->extra += this->extra;
+    this->extra -= temp->extra;
+    if(temp->left != nullptr)
+        temp->left->extra -= this->extra;
     temp->left = this;
     this->calcHeight();
     temp->calcHeight();
@@ -221,7 +241,6 @@ template<class T, class Cond>
 RankNode<T,Cond> *RankNode<T,Cond>::roll_LR()
 {
     this->left = this->left->roll_RR();
-    //this->setRank(this->left->getRank() + this->right->getRank() + 1);
     return this->roll_LL();
 }
 
@@ -368,13 +387,13 @@ void RankNode<T,Cond>::AddExtraAux(int end, int toAdd, int prevDirection)
 {
     if(this == nullptr)
         throw KeyNotFound();
-    if(this->key < end)
+    if(this->key > end)
     {
         if(prevDirection == RIGHT)
             this->extra-=toAdd;
         this->left->AddExtraAux(end, toAdd, LEFT);
     }
-    else if(this->key > end)
+    else if(this->key < end)
     {
         if(prevDirection == LEFT)
             this->extra+=toAdd;
