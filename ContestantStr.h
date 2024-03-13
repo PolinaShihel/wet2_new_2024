@@ -1,10 +1,10 @@
-
-
 #ifndef WET2_NEW_2024_CONTESTANTSTR_H
 #define WET2_NEW_2024_CONTESTANTSTR_H
 #include "Contestant.h"
 #include "ContestantEntry.h"
 
+class Contestant;
+class ContestantEntry;
 class ContestantStr {
 private:
     Contestant* conPtr;

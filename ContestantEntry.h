@@ -5,6 +5,8 @@
 #include "Contestant.h"
 #include "ContestantStr.h"
 
+class Contestant;
+class ContestantStr;
 class ContestantEntry {
 private:
     Contestant* conPtr;

@@ -1,7 +1,3 @@
-//
-// Created by pshih on 12/03/2024.
-//
-
 #include "Team.h"
 
 
@@ -33,13 +29,10 @@ void Team::destroy_players_trees() {
 void Team::add_contestant_to_team(Contestant * contestant) {
     int str = contestant->get_strength();
     int ent = this->get_entry();
-
-
+    ContestantEntry *toAddEntry = new ContestantEntry(contestant);
+    ContestantStr *toAddStr;
     try {
-        ContestantEntry *toAddEntry = new ContestantEntry(contestant);
-        ContestantStr *toAddStr;
         contestantTreeEntry->insert(ent, toAddEntry);
-
         toAddStr = new ContestantStr(contestant,toAddEntry);
         toAddEntry->setStrPtr(toAddStr);
 
@@ -47,7 +40,8 @@ void Team::add_contestant_to_team(Contestant * contestant) {
         contestantTreeStr->insert(strCond,toAddStr);
 
     } catch (std::bad_alloc &error) {
-        return StatusType::ALLOCATION_ERROR;
+        delete toAddEntry;
+        throw;
     } catch (...) {
         delete toAddEntry;
         delete toAddStr;

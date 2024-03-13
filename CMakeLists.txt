@@ -8,4 +8,4 @@ add_executable(wet2_new_2024 AVL_tree.h Contestant.cpp hashTable.h main24a2.cpp 
         ContestantStr.h
         ContestantEntry.cpp
         ContestantEntry.h
-        wet2util.h)
+        wet2util.h rankTreeTester.cpp)

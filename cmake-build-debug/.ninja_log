@@ -1,3 +1,12 @@
 # ninja log v5
 20	192	7320490773998267	CMakeFiles/wet2_new_2024.dir/StrCond.cpp.obj	e921d91b6189689
 8	196	7320490774051125	CMakeFiles/wet2_new_2024.dir/Contestant.cpp.obj	5369afd30235c9ab
+2	2117	7320509970882904	CMakeFiles/wet2_new_2024.dir/main24a2.cpp.obj	c19b128f85d3b766
+19	1626	7320512295153419	CMakeFiles/wet2_new_2024.dir/rankTreeTester.cpp.obj	c129abe1a144cf99
+3	80	7320521108851501	CMakeFiles/wet2_new_2024.dir/ContestantStr.cpp.obj	e2a5c83b25b19f6a
+9	558	7320521113622607	CMakeFiles/wet2_new_2024.dir/olympics24a2.cpp.obj	dd99cf72e8cbbeeb
+4	123	7320521389018920	CMakeFiles/wet2_new_2024.dir/ContestantStr.cpp.obj	e2a5c83b25b19f6a
+20	138	7320521389260945	CMakeFiles/wet2_new_2024.dir/ContestantEntry.cpp.obj	18b3f36c4515403a
+9	1501	7320521402309099	CMakeFiles/wet2_new_2024.dir/olympics24a2.cpp.obj	dd99cf72e8cbbeeb
+3	426	7320524822845977	CMakeFiles/wet2_new_2024.dir/Team.cpp.obj	d58843dd61eaabf0
+427	607	7320524824595758	wet2_new_2024.exe	f520f1cdfb85490c

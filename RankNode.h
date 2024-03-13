@@ -2,6 +2,7 @@
 #define WET2_RANKNODE_H
 
 #include <iostream>
+#include "Node.h"
 
 #define LL 2
 #define LR -1
@@ -56,9 +57,15 @@ public:
     RankNode *isExist(const Cond &newKey);
     //void setRank(int rank);
     int getRank();
+    int getWeight();
     void AddExtra(int end, int toAdd);
     void AddExtraAux(int end, int toAdd, int prevDirection);
 };
+
+template<class T, class Cond>
+int RankNode<T,Cond>::getWeight() {
+    return this->rank;
+}
 
 template<class T, class Cond>
 RankNode<T,Cond> *RankNode<T,Cond>::insertNode(const Cond &newKey, const T &newData, int sum)
@@ -66,10 +73,11 @@ RankNode<T,Cond> *RankNode<T,Cond>::insertNode(const Cond &newKey, const T &newD
     if(this == nullptr){
         return new RankNode<T, Cond>(newKey, newData, 1, -sum);
     }
+    sum+=this->extra;
     if (this->key < newKey) {
-        this->right = this->right->insertNode(newKey, newData);
+        this->right = this->right->insertNode(newKey, newData, sum);
     } else if (this->key > newKey) {
-        this->left = this->left->insertNode(newKey, newData);
+        this->left = this->left->insertNode(newKey, newData, sum);
     }else
         throw KeyExists();
     this->calcHeight();
@@ -160,7 +168,7 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
                 this->left = temp;
                 tempRank = toSwap->rank;
                 toSwap->rank = this->rank;
-                thas->rank = tempRank;
+                this->rank = tempRank;
             }
         }
         toSwap->left = toSwap->left->deleteNode(newKey);
