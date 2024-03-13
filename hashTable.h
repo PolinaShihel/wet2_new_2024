@@ -28,7 +28,7 @@ public:
     ~hashTable();
     T* find(Cond key);
     void insert( Cond key, T& element);
-    void remove( Cond key, T& element);
+    void remove( Cond key);
 
     //void print_hash();
 };
@@ -52,27 +52,25 @@ double hashTable<T, Cond>::getLoadFactor() const {
 
 template<class T, class Cond>
 void hashTable<T, Cond>::rehash() {
+    AVLTree<T, Cond> *tmp;
     if(getLoadFactor() >= MAX_LOAD_COUNT) {
         size *= 2;
-        AVLTree<T, Cond> *tmp = new AVLTree<T, Cond>[size];
+        tmp = new AVLTree<T, Cond>[size];
 
         for (int i = 0; i < size / 2; ++i) {
             relocateMembersImpl(members[i].getRoot(), tmp);
         }
-
-        delete[] members;
-        members = tmp;
     } else {
         size = size / 2;
-        AVLTree<T, Cond> *tmp = new AVLTree<T, Cond>[size];
+        tmp = new AVLTree<T, Cond>[size];
 
         for (int i = 0; i < size*2 ; ++i) {
             relocateMembersImpl(members[i].getRoot(), tmp);
         }
-
+    }
         delete[] members;
         members = tmp;
-    }
+
 }
 
 template<class T, class Cond>
@@ -102,7 +100,7 @@ void hashTable<T, Cond>::insert( Cond key,  T& element) {
 }
 
 template<class T, class Cond>
-void hashTable<T, Cond>::remove( Cond key,  T& element) {
+void hashTable<T, Cond>::remove( Cond key) {
     if(getLoadFactor() <= MAX_LOAD_COUNT/2){
         rehash();
     }

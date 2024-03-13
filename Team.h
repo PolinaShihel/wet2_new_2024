@@ -33,6 +33,7 @@ public:
     void set_wins(int toAdd);
     int calc_team_power();
 
+
     void destroy_players_trees(); //TODO
     void add_contestant_to_team(Contestant * contestant);
     void remove_newest_player();
