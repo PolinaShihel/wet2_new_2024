@@ -122,11 +122,13 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
             delete this;
             return nullptr;
         } else if ((this->left != nullptr) && (this->right == nullptr)) {
+            this->left->extra += this->extra;
             toSwap = this->left;
             this->left = nullptr;
             delete this;
             return toSwap;
         } else if ((this->left == nullptr) && (this->right != nullptr)) {
+            this->right->extra += this->extra;
             toSwap = this->right;
             this->right = nullptr;
             delete this;
@@ -134,14 +136,24 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
         } else {
             RankNode<T, Cond> *temp;
             if (this->left->right != nullptr) {
+                this->right->extra+=this->extra;
+                this->left->extra+=this->extra;
                 RankNode<T, Cond> *biggestFather = findBiggestParent(this->left);
                 toSwap = biggestFather->right;
                 temp = toSwap->left;
+                this->right->extra-=toSwap->extra;
+                this->left->extra-=toSwap->extra;
+                temp->extra+=toSwap->extra;
+                temp->extra-=this->extra;
                 biggestFather->right = this;
                 swap(this, toSwap);
                 this->right = nullptr;
                 this->left = temp;
             } else {
+                this->right->extra-=this->left->extra;
+                if(this->left->left!= nullptr)
+                    this->left->left->extra-=this->extra;
+                this->left->extra+=this->extra;
                 toSwap = this->left;
                 temp = this->left->left;
                 this->left->left = this;
