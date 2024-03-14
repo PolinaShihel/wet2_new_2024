@@ -227,14 +227,31 @@ int main(){
     RankTree<int,int>* tree = new RankTree<int,int>();
     for(int i = 1; i<=14; i++)
         tree->insert(i,i);
-    tree->inOrderTraversal();
-    printMessage();
+    //tree->inOrderTraversal();
+//    printMessage();
     tree->addExtra(13,5);
-    tree->inOrderTraversal();
-    printMessage();
+    //tree->inOrderTraversal();
+//    printMessage();
     tree->addExtra(6,3);
     tree->inOrderTraversal();
     printMessage();
+    tree->remove(5);
+    tree->inOrderTraversal();
+    printMessage();
+    tree->insert(5,5);
+    tree->inOrderTraversal();
+    printMessage();
+    std::cout << "the sum is: " << tree->findSum(5) << std::endl;
+    std::cout << "the sum is: " << tree->findSum(7) << std::endl;
+    std::cout << "the sum is: " << tree->findSum(7) << std::endl;
+    tree->addExtra(6,1);
+    tree->addExtra(5,-1);
+    tree->remove(8);
+    tree->inOrderTraversal();
+    printMessage();
+    std::cout << "the sum is: " << tree->findSum(4) << std::endl;
+
+
 
     return 0;
 }

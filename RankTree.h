@@ -24,7 +24,15 @@ public:
     void fillArrayImpl(RankNode<T, Cond> *node, RankNode<T,Cond>* arr[], int* index);
     void inOrderTraversal();
     void addExtra(int end, int toAdd);
+    int findSum(const Cond& toFind);
 };
+template<class T,class Cond>
+int RankTree<T,Cond>::findSum(const Cond &toFind) {
+    if(this->root == nullptr)
+        return 0;
+    return this->root->findSum(toFind, 0);
+}
+
 template<class T,class Cond>
 void RankTree<T,Cond>::addExtra(int end, int toAdd)
 {

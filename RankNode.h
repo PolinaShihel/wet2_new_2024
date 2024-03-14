@@ -61,7 +61,21 @@ public:
     void AddExtra(int end, int toAdd);
     void AddExtraAux(int end, int toAdd, int prevDirection);
     void inOrderTraversal(int depth);
+    int findSum(const Cond& toFind, int sum);
 };
+template<class T,class Cond>
+int RankNode<T,Cond>::findSum(const Cond &toFind, int sum) {
+    if(this == nullptr)
+        throw KeyNotFound();
+    sum+=this->extra;
+    if(this->key < toFind)
+        return this->right->findSum(toFind, sum);
+    else if(this->key > toFind)
+        return this->left->findSum(toFind, sum);
+    else
+        return sum;
+}
+
 template<class T,class Cond>
 void RankNode<T,Cond>::inOrderTraversal(int depth) {
     if(this== nullptr)
@@ -148,18 +162,19 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
             RankNode<T, Cond> *temp;
             int tempRank;
             if (this->left->right != nullptr) {
-                this->right->extra+=this->extra;
-                this->left->extra+=this->extra;
+//                this->right->extra+=this->extra;
+//                this->left->extra+=this->extra;
                 RankNode<T, Cond> *biggestFather = findBiggestParent(this->left);
                 toSwap = biggestFather->right;
                 temp = toSwap->left;
-                this->right->extra-=toSwap->extra;
-                this->left->extra-=toSwap->extra;
                 if(temp!= nullptr)
                 {
                     temp->extra+=toSwap->extra;
                     temp->extra-=this->extra;
                 }
+                toSwap->extra = this->findSum(toSwap->key,0);
+                this->right->extra+=(this->extra - toSwap->extra);
+                this->left->extra+=(this->extra - toSwap->extra);
                 biggestFather->right = this;
                 swap(this, toSwap);
                 this->right = nullptr;
