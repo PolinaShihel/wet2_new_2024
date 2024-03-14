@@ -451,7 +451,7 @@ void RankNode<T,Cond>::AddExtraAux(int end, int toAdd, int prevDirection)
     else//found
     {
         if(prevDirection == LEFT)
-            this->key+=toAdd;
+            this->extra+=toAdd;
         if(this->right!= nullptr)
             this->right->extra-=toAdd;
     }
