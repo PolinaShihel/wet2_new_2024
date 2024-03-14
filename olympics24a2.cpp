@@ -49,6 +49,8 @@ StatusType olympics_t::remove_team(int teamId)
         }
         teamsHash.remove(teamId);
 
+        number_of_teams--;
+
         if(highest_ranked_team_id == teamId){
             if(teamsTree.getSize() == 0 ) {
                 highest_ranked_team_id = 0;
@@ -70,9 +72,7 @@ StatusType olympics_t::remove_team(int teamId)
     }   catch (KeyNotFound &error) {
             return StatusType::FAILURE;
     }
-    number_of_teams--;
-    if(number_of_teams == 0)
-        highest_ranked_team_id = -1;
+
 	return StatusType::SUCCESS;
 }
 
