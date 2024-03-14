@@ -31,7 +31,7 @@ public:
     void set_number_of_players(int toAdd);
     void set_power(int toSet);
     void set_wins(int toAdd);
-    int calc_team_power();
+    void calc_team_power();
 
 
     void destroy_players_trees(); //TODO

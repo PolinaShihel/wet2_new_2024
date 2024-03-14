@@ -47,7 +47,7 @@ int hashTable<T, Cond>::getHashCode(Cond key) {
 
 template<class T, class Cond>
 double hashTable<T, Cond>::getLoadFactor() const {
-    return elementsCount / size;
+    return ( elementsCount / size );
 }
 
 template<class T, class Cond>
@@ -95,8 +95,7 @@ void hashTable<T, Cond>::insert( Cond key,  T& element) {
     int hashCode = getHashCode(key);
 
     members[hashCode].insert(key, element);
-    if (members[hashCode].getSize()>0)
-        elementsCount++;
+    elementsCount++;
 }
 
 template<class T, class Cond>
@@ -106,8 +105,7 @@ void hashTable<T, Cond>::remove( Cond key) {
     }
     int hashCode = getHashCode(key);
     members[hashCode].remove(key);
-    if(members[hashCode].getSize() == 0)
-        elementsCount--;
+    elementsCount--;
 }
 /*
 template<class T,class Cond>

@@ -25,8 +25,10 @@ class olympics_t {
 private:
     hashTable<Team*, int> teamsHash;
     int highest_ranked_team_id;
+    int highest_ranked_team_rank;
     int number_of_teams;
     RankTree<Team*,StrCond> teamsTree;
+    void highest_ranked_team_compare(Team* toCompare);
 
 public:
 	// <DO-NOT-MODIFY> {

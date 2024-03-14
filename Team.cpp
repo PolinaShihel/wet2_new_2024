@@ -16,13 +16,12 @@ void Team::set_wins(int toAdd) { this->wins +=toAdd; }
 int Team::get_entry() { return entry; }
 void Team::add_entry() { this->entry +=1; }
 
-int Team::calc_team_power() { // TODO: implement select
+void Team::calc_team_power() { // TODO: implement select
     //ContestantStr*  median_con = contestantTreeStr->select(number_of_players/2);
     //int power = number_of_players * median_con->conPtr->get_strength();
     this->set_power(power);
-    return power;
 }
-void Team::destroy_players_trees() {
+void Team::destroy_players_trees() { //TODO
 
 }
 
@@ -38,6 +37,8 @@ void Team::add_contestant_to_team(Contestant * contestant) {
 
         StrCond strCond = StrCond(str,ent);
         contestantTreeStr->insert(strCond,toAddStr);
+
+        this->calc_team_power();
 
     } catch (std::bad_alloc &error) {
         delete toAddEntry;
@@ -60,7 +61,5 @@ void Team::remove_newest_player() {
     this->contestantTreeStr->remove(strCond);
     this->set_number_of_players(-1);
 
-    //TODO : check if need to update highest ranked team
-    //int powerToCompare = this->calc_team_power();
 
 }
