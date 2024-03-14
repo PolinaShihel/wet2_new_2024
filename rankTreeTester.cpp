@@ -258,8 +258,18 @@ int main(){
     tree->inOrderTraversal();
     printMessage();
     std::cout << "the sum is: " << tree->findSum(4) << std::endl;
+    try
+    {
+        tree->find(20);
+    }catch(...){
+        std::cout << "NOT FOUND" << std::endl;
+    }
+    for (int i = 1; i < 14; ++i) {
+        std::cout << i << " is " << *(tree->select(i)) << std::endl;
+    }
 
 
 
     return 0;
 }
+

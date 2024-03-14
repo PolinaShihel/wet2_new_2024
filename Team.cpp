@@ -17,6 +17,7 @@ int Team::get_entry() { return entry; }
 void Team::add_entry() { this->entry +=1; }
 
 void Team::calc_team_power() { // TODO: implement select
+    //TODO: check if tree empty or if size == 1
     //ContestantStr*  median_con = contestantTreeStr->select(number_of_players/2);
     //int power = number_of_players * median_con->conPtr->get_strength();
     this->set_power(power);

@@ -25,7 +25,21 @@ public:
     void inOrderTraversal();
     void addExtra(int end, int toAdd);
     int findSum(const Cond& toFind);
+    T* select(int rank);
+    int Rank(Cond& key);
 };
+template<class T,class Cond>
+int RankTree<T,Cond>::Rank(Cond &key) {
+    if(this->root == nullptr)
+        throw KeyNotFound();
+    return this->root->Rank(key);
+}
+
+template<class T,class Cond>
+T* RankTree<T,Cond>::select(int rank) {
+    return this->root->select(rank,0);
+}
+
 template<class T,class Cond>
 int RankTree<T,Cond>::findSum(const Cond &toFind) {
     if(this->root == nullptr)

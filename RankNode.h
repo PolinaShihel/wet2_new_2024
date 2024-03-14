@@ -56,13 +56,50 @@ public:
     void calcHeight();
     RankNode *isExist(const Cond &newKey);
     //void setRank(int rank);
-    int getRank();
+    //int getRank();
     int getWeight();
     void AddExtra(int end, int toAdd);
     void AddExtraAux(int end, int toAdd, int prevDirection);
     void inOrderTraversal(int depth);
     int findSum(const Cond& toFind, int sum);
+    T* select(int rank, int sum);
+    int Rank(Cond& toFind);
 };
+
+template<class T,class Cond>
+int RankNode<T,Cond>::Rank(Cond &toFind) {
+    if(this == nullptr)
+        throw KeyNotFound();
+    if(this->key < toFind){
+        if(this->left!= nullptr)
+            return this->left->rank + 1 + this->right->Rank(toFind);
+        return 1 + this->right->Rank(toFind);
+    }
+    else if(this->key > toFind)
+        return this->left->Rank(toFind);
+    else{
+        if(this->left!= nullptr)
+            return this->left->rank + 1;
+        return 1 ;
+    }
+}
+
+template<class T,class Cond>
+T* RankNode<T,Cond>::select(int rank, int sum)
+{
+    if(this == nullptr)
+        throw KeyNotFound();
+    int thisRank = 1 + sum;
+    if(this->left != nullptr)
+        thisRank+=this->left->rank;
+    if(thisRank < rank)
+        return this->right->select(rank, thisRank);
+    else if (thisRank > rank)
+        return this->left->select(rank, sum);
+    else
+        return this->getNodeDataPointer();
+}
+
 template<class T,class Cond>
 int RankNode<T,Cond>::findSum(const Cond &toFind, int sum) {
     if(this == nullptr)
@@ -114,13 +151,13 @@ RankNode<T,Cond> *RankNode<T,Cond>::insertNode(const Cond &newKey, const T &newD
 //    this->rank = toSet;
 //}
 //
-template<class T, class Cond>
-int RankNode<T, Cond>::getRank()
-{
-    if(this->right == nullptr)
-        return this->rank;
-    return (this->rank - this->right->rank);
-}
+//template<class T, class Cond>
+//int RankNode<T, Cond>::getRank()
+//{
+//    if(this->right == nullptr)
+//        return this->rank;
+//    return (this->rank - this->right->rank);
+//}
 
 template<class T, class Cond>
 RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
