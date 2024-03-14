@@ -265,7 +265,12 @@ int main(){
         std::cout << "NOT FOUND" << std::endl;
     }
     for (int i = 1; i < 14; ++i) {
-        std::cout << i << " is " << *(tree->select(i)) << std::endl;
+        std::cout << " for rank: "<< i << " key is " << *(tree->select(i)) << std::endl;
+    }
+    for (int i = 1; i <= 14; ++i) {
+        if(i==8)
+            continue;
+        std::cout << " for key: "<< i << " rank is " << tree->Rank(i) << std::endl;
     }
 
 
