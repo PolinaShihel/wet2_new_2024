@@ -37,7 +37,9 @@ public:
     void destroy_players_trees(); //TODO
     void add_contestant_to_team(Contestant * contestant);
     void remove_newest_player();
-
+    void fillArray(Node<ContestantEntry*, int> *teamEntry[], RankNode<ContestantStr*, StrCond> *teamStr[], int size);
+    void setTrees(Node<ContestantEntry*, int> *teamTotalEntry[],RankNode<ContestantStr*, StrCond> *teamTotalStr[],
+                  int size, int lastestEntry);
 };
 
 #endif //WET2DS_2024_TEAM_H

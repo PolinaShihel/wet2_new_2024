@@ -73,3 +73,23 @@ void Team::remove_newest_player() {
     this->set_number_of_players(-1);
     this->calc_team_power();
 }
+
+void Team::fillArray(Node<ContestantEntry*, int> *teamEntry[], RankNode<ContestantStr*, StrCond> *teamStr[], int size)
+{
+    this->contestantTreeEntry->fillArray(teamEntry,0);
+    this->contestantTreeStr->fillArray(teamStr,0);
+}
+
+void Team::setTrees(Node<ContestantEntry*, int> *teamTotalEntry[],RankNode<ContestantStr*, StrCond> *teamTotalStr[],
+                    int size, int latestEntry)
+{
+    AVLTree<ContestantEntry*, int> *Entry = new AVLTree<ContestantEntry*, int>(teamTotalEntry, size, 0, size - 1);
+    RankTree<ContestantStr*, StrCond>* Str = new RankTree<ContestantStr*, StrCond>(teamTotalStr, size, 0, size -1);
+    destroy_players_trees();
+    this->contestantTreeEntry = Entry;
+    this->contestantTreeStr = Str;
+    this->entry = latestEntry;
+    this->number_of_players = size;
+    this->calc_team_power();
+}
+

@@ -227,7 +227,67 @@ output_t<int> olympics_t::get_highest_ranked_team()
 
 StatusType olympics_t::unite_teams(int teamId1, int teamId2)
 {
-	// TODO: Your code goes here
+    if((teamId1 <=0)||(teamId2<=0)||(teamId1==teamId2))
+        return StatusType::INVALID_INPUT;
+    try{
+        Team* team1 = *(teamsHash.find(teamId1));
+        Team* team2 = *(teamsHash.find(teamId2));
+        int team1Size = team1->get_number_of_players();
+        int team2Size = team2->get_number_of_players();
+        //TODO:check if one (or both) of the teams is empty
+        StrCond* team1cond = new StrCond(team1->get_power(),teamId1);
+        StrCond* team2cond = new StrCond(team2->get_power(),teamId2);
+        Node<ContestantEntry*, int> *team1Entry[team1Size];
+        RankNode<ContestantStr*, StrCond> *team1Str[team1Size];
+        Node<ContestantEntry*, int> *team2Entry[team2Size];
+        RankNode<ContestantStr*, StrCond> *team2Str[team2Size];
+        int totalSize = team1Size + team2Size;
+        Node<ContestantEntry*, int> *teamTotalEntry[totalSize];
+        RankNode<ContestantStr*, StrCond> *teamTotalStr[totalSize];
+        team1->fillArray(team1Entry,team1Str,team1Size);
+        team2->fillArray(team2Entry,team2Str,team2Size);
+        int latestArrival = team1->get_entry();
+        for(int i = 0; i < team2Size; i++)
+        {
+            int entry = team2Entry[i]->getNodeData()->getConPtr()->get_entry();
+            team2Entry[i]->getNodeData()->getConPtr()->set_entry(entry + latestArrival);
+        }
+        for(int i = 0; i < team1Size;i++)
+        {
+            teamTotalEntry[i]=team1Entry[i];
+        }
+        for(int i = 0; i < team2Size;i++)
+        {
+            teamTotalEntry[team1Size + i]=team2Entry[i];
+        }
+        int latestTotal = teamTotalEntry[totalSize-1]->getNodeData()->getConPtr()->get_entry();
+        int indexT1 = 0, indexT2 = 0, currIndex = 0;
+        while((indexT1<team1Size)||(indexT2<team2Size))
+        {
+            if((indexT2>=team2Size)||((indexT1<team1Size)&&
+                    (team1Str[indexT1]->getKey()<team2Str[indexT2]->getKey())))
+                teamTotalStr[currIndex++] = team1Str[indexT1++];
+            else if((indexT1>=team1Size)||((indexT2<team2Size)&&
+                                           (team2Str[indexT2]->getKey()<team1Str[indexT1]->getKey())))
+                teamTotalStr[currIndex++] = team2Str[indexT2++];
+        }
+        team1->setTrees(teamTotalEntry,teamTotalStr,totalSize, latestTotal + 1);
+        team2->destroy_players_trees();
+        this->teamsTree.remove(*team1cond);
+        this->teamsTree.remove(*team2cond);
+        this->teamsHash.remove(*team2cond);
+        delete team1cond;
+        delete team2cond;
+        StrCond* teamCond = new StrCond(team1->get_power(),teamId1);
+        this->teamsTree.insert(*teamCond,team1);
+        //TODO:NEED TO FINISH
+    }
+    catch(std::bad_alloc &error){
+        return StatusType::ALLOCATION_ERROR;
+    }catch(KeyNotFound &error){
+        return StatusType::FAILURE;
+    }
+
     return StatusType::SUCCESS;
 }
 
