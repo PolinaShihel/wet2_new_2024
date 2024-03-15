@@ -16,11 +16,19 @@ void Team::set_wins(int toAdd) { this->wins +=toAdd; }
 int Team::get_entry() { return entry; }
 void Team::add_entry() { this->entry +=1; }
 
-void Team::calc_team_power() { // TODO: implement select
-    //TODO: check if tree empty or if size == 1
-    //ContestantStr*  median_con = contestantTreeStr->select(number_of_players/2);
-    //int power = number_of_players * median_con->conPtr->get_strength();
-    this->set_power(power);
+void Team::calc_team_power() {
+    if(contestantTreeStr->getSize() == 0 || this->get_number_of_players() == 0 ) {
+        this->set_power(0);
+        return;
+    }
+    if(this->get_number_of_players() == 1 ) {
+        ContestantStr* toSet = *(contestantTreeStr->select(1));
+        this->set_power(toSet->getConPtr()->get_strength());
+    } else {
+        ContestantStr*  median_con = *(contestantTreeStr->select(number_of_players/2));
+        int power = this->get_number_of_players() * (median_con->getConPtr()->get_strength());
+        this->set_power(power);
+    }
 }
 void Team::destroy_players_trees() { //TODO
 
@@ -36,6 +44,7 @@ void Team::add_contestant_to_team(Contestant * contestant) {
         toAddStr = new ContestantStr(contestant,toAddEntry);
         toAddEntry->setStrPtr(toAddStr);
 
+        this->set_number_of_players(1);
         StrCond strCond = StrCond(str,ent);
         contestantTreeStr->insert(strCond,toAddStr);
 
@@ -43,6 +52,7 @@ void Team::add_contestant_to_team(Contestant * contestant) {
 
     } catch (std::bad_alloc &error) {
         delete toAddEntry;
+        delete toAddStr;
         throw;
     } catch (...) {
         delete toAddEntry;
@@ -53,7 +63,7 @@ void Team::add_contestant_to_team(Contestant * contestant) {
 }
 
 void Team::remove_newest_player() {
-    Node<ContestantEntry*,int> *toDeleteNode = this->contestantTreeEntry->getSmallest();
+    Node<ContestantEntry*,int> *toDeleteNode = this->contestantTreeEntry->getBiggest();
     ContestantEntry* toDeleteEntry = toDeleteNode->getNodeData();
     int ent = toDeleteEntry->getConPtr()->get_entry();
     int str = toDeleteEntry->getConPtr()->get_strength();
@@ -61,6 +71,5 @@ void Team::remove_newest_player() {
     this->contestantTreeEntry->remove(ent);
     this->contestantTreeStr->remove(strCond);
     this->set_number_of_players(-1);
-
-
+    this->calc_team_power();
 }

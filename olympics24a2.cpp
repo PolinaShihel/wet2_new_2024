@@ -1,6 +1,6 @@
 #include "olympics24a2.h"
 
-olympics_t::olympics_t() : teamsHash(), highest_ranked_team_id(-1),highest_ranked_team_rank(0), number_of_teams(0) ,teamsTree() {}
+olympics_t::olympics_t() : teamsHash(), highest_ranked_team_id(-1),highest_ranked_team_rank(-1), number_of_teams(0) ,teamsTree() {}
 
 olympics_t::~olympics_t()
 {
@@ -13,8 +13,7 @@ StatusType olympics_t::add_team(int teamId)
     if (teamId <= 0)
         return StatusType::INVALID_INPUT;
     try {
-        if(teamsHash.find(teamId) != nullptr)
-            return StatusType::FAILURE;
+
 
         Team* toAdd = new Team(teamId);
         teamsHash.insert(teamId,toAdd);
@@ -27,6 +26,8 @@ StatusType olympics_t::add_team(int teamId)
 
     }  catch (std::bad_alloc &error) {
          return StatusType::ALLOCATION_ERROR;
+    }  catch (KeyExists &error) {
+        return StatusType::FAILURE;
     }
     number_of_teams++;
 	return StatusType::SUCCESS;
@@ -37,8 +38,6 @@ StatusType olympics_t::remove_team(int teamId)
     if (teamId <= 0)
         return StatusType::INVALID_INPUT;
     try {
-        if (teamsHash.find(teamId) == nullptr)
-            return StatusType::FAILURE;
 
         Team* toDelete= *(teamsHash.find(teamId));
 
@@ -81,26 +80,29 @@ StatusType olympics_t::add_player(int teamId, int playerStrength)
     if (teamId <= 0 || playerStrength <= 0 )
         return StatusType::INVALID_INPUT;
     try {
-        if (teamsHash.find(teamId) != nullptr)
-            return StatusType::FAILURE;
+        // need to test if team exists?
 
         Team* ptrTeam= *(teamsHash.find(teamId));
         Contestant* con = new Contestant(ptrTeam->get_entry(),playerStrength); // not sure about this maybe need to change the way we add contestant (ze tip tipa akum)
+
+        StrCond strCond1 = StrCond(ptrTeam->get_power(),teamId); // before adding
+
         ptrTeam->add_contestant_to_team(con);
 
-        StrCond strCond = StrCond(ptrTeam->get_power(),teamId);
-
-        if(teamsTree.find(strCond) == nullptr)
-        {
-            teamsTree.insert(strCond,ptrTeam);
+        StrCond strCond2 = StrCond(ptrTeam->get_power(),teamId); //after adding
+        if (ptrTeam->get_number_of_players() > 1) {
+            this->teamsTree.remove(strCond1);
         }
+        this->teamsTree.insert(strCond2,ptrTeam);
 
         highest_ranked_team_compare(ptrTeam);
 
     }  catch (std::bad_alloc &error) {
-        return StatusType::ALLOCATION_ERROR;
+            return StatusType::ALLOCATION_ERROR;
     }   catch (KeyExists &error) {
-        return StatusType::FAILURE;
+            return StatusType::FAILURE;
+    }   catch (KeyNotFound &error) {
+            return StatusType::FAILURE;
     }
 
 
@@ -112,17 +114,23 @@ StatusType olympics_t::remove_newest_player(int teamId)
     if (teamId <= 0 )
         return StatusType::INVALID_INPUT;
     try {
-        if (teamsHash.find(teamId) == nullptr)
-            return StatusType::FAILURE;
         Team* ptrTeam= *(teamsHash.find(teamId));
         if(ptrTeam->get_number_of_players() == 0)
             return StatusType::FAILURE;
 
+        StrCond strCond1 = StrCond(ptrTeam->get_power(),teamId); // str cond before change
+
         ptrTeam->remove_newest_player();
         ptrTeam->calc_team_power();
 
+        StrCond strCond2 = StrCond(ptrTeam->get_power(),teamId); // str cond after change
+
+        this->teamsTree.remove(strCond1);
+        this->teamsTree.insert(strCond2,ptrTeam);
+
         if(teamId == highest_ranked_team_id)
         {
+            highest_ranked_team_rank = ptrTeam->get_power()+ ptrTeam->get_wins();
             Team* current_highest = teamsTree.getBiggest()->getNodeData();
             highest_ranked_team_compare(current_highest); // also updates
         }
@@ -131,6 +139,8 @@ StatusType olympics_t::remove_newest_player(int teamId)
     } catch (std::bad_alloc &error) {
         return StatusType::ALLOCATION_ERROR;
     } catch (KeyExists &error) {
+        return StatusType::FAILURE;
+    }catch (KeyNotFound &error) {
         return StatusType::FAILURE;
     }
 	return StatusType::SUCCESS;
@@ -179,10 +189,16 @@ output_t<int> olympics_t::play_match(int teamId1, int teamId2)
 
 void olympics_t::highest_ranked_team_compare(Team* toCompare) // also updates if higher
 {
-    Team* currentHighest = *(teamsHash.find(highest_ranked_team_id));
-    if (currentHighest->get_power() +currentHighest->get_wins() < toCompare->get_power() + toCompare->get_wins()) {
+    if(highest_ranked_team_id == 0){
         highest_ranked_team_id = toCompare->get_team_id();
         highest_ranked_team_rank = toCompare->get_power() + toCompare->get_wins();
+
+    } else {
+        Team *currentHighest = *(teamsHash.find(highest_ranked_team_id));
+        if (highest_ranked_team_rank < toCompare->get_power() + toCompare->get_wins()) {
+            highest_ranked_team_id = toCompare->get_team_id();
+            highest_ranked_team_rank = toCompare->get_power() + toCompare->get_wins();
+        }
     }
 }
 
@@ -192,13 +208,14 @@ output_t<int> olympics_t::num_wins_for_team(int teamId)
         return StatusType::INVALID_INPUT;
     int wins=0;
     try {
-        if (teamsHash.find(teamId) == nullptr)
-            return StatusType::FAILURE;
+
         Team* ptrTeam= *(teamsHash.find(teamId));
         wins = ptrTeam->get_wins();
 
     } catch (std::bad_alloc &error) {
         return StatusType::ALLOCATION_ERROR;
+    } catch (KeyNotFound &error) {
+        return StatusType::FAILURE;
     }
     return wins;
 }
