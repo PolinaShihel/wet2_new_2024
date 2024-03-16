@@ -1,6 +1,6 @@
 #include "olympics24a2.h"
 
-olympics_t::olympics_t(): teamsHash(),,highest_ranked_team_rank(-1), number_of_teams(0) ,teamsTree() {}
+olympics_t::olympics_t(): teamsHash(),highest_ranked_team_rank(-1), number_of_teams(0) ,teamsTree() {}
 
 olympics_t::~olympics_t()
 {
@@ -91,7 +91,7 @@ StatusType olympics_t::add_player(int teamId, int playerStrength)
         }
         this->teamsTree.insert(strCond2,ptrTeam);
 
-        highest_ranked_team_compare(ptrTeam);
+        //highest_ranked_team_compare(ptrTeam);
 
     }  catch (std::bad_alloc &error) {
             return StatusType::ALLOCATION_ERROR;
@@ -128,7 +128,7 @@ StatusType olympics_t::remove_newest_player(int teamId)
         }
 
         if( teamsTree.getSize() > 0){
-            highest_ranked_team_compare(); // also updates
+            //highest_ranked_team_compare(); // also updates
         }
         if(teamsTree.getSize() == 0) {
             highest_ranked_team_rank = 0;
@@ -176,11 +176,11 @@ output_t<int> olympics_t::play_match(int teamId1, int teamId2)
                 }
             }
         }
-
-        if(ptrTeam1->get_number_of_players() > 0 )
-            highest_ranked_team_compare(ptrTeam1);
-        if(ptrTeam2->get_number_of_players() > 0 )
-            highest_ranked_team_compare(ptrTeam2);
+//
+//        if(ptrTeam1->get_number_of_players() > 0 )
+//            highest_ranked_team_compare(ptrTeam1);
+//        if(ptrTeam2->get_number_of_players() > 0 )
+//            highest_ranked_team_compare(ptrTeam2);
 
     }  catch (std::bad_alloc &error) {
             return StatusType::ALLOCATION_ERROR;

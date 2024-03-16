@@ -223,68 +223,74 @@
 //    std::cout <<  "=========================================="<<std::endl;
 //}
 //
-//int main(){
-//    RankTree<int,int>* tree = new RankTree<int,int>();
-//    for(int i = 1; i<=14; i++)
-//        tree->insert(i,i);
-//    //tree->inOrderTraversal();
-////    printMessage();
-//    tree->addExtra(13,5);
-//    std::cout<<"added 5 until 13" << std::endl;
-//    for (int i = 1; i <= 14; ++i) {
-//        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
+int main(){
+    RankTree<int,int>* tree = new RankTree<int,int>();
+    for(int i = 1; i<=14; i++)
+        tree->insert(i,i);
+    //tree->inOrderTraversal();
+//    printMessage();
+    tree->addExtra(13,5);
+    std::cout<<"added 5 until 13" << std::endl;
+    for (int i = 1; i <= 14; ++i) {
+        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
+    }
+    tree->addExtra(6,3);
+    std::cout<<"added 3 until 16" << std::endl;
+    for (int i = 1; i <= 14; ++i) {
+        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
+    }
+    tree->remove(5);
+    std::cout<<"removed 5" << std::endl;
+    for (int i = 1; i <= 14; ++i) {
+        if(i==5)
+            continue;
+        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
+    }
+    tree->insert(5,5);
+    std::cout<<"inserted 5" << std::endl;
+    for (int i = 1; i <= 14; ++i) {
+        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
+    }
+    tree->addExtra(6,1);
+    std::cout<<"added extra 1 until 6" << std::endl;
+    for (int i = 1; i <= 14; ++i) {
+        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
+    }
+    tree->addExtra(5,-1);
+    std::cout<<"added extra -1 until 5" << std::endl;
+    for (int i = 1; i <= 14; ++i) {
+        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
+    }
+    tree->remove(8);
+    std::cout<<"removed 8" << std::endl;
+    for (int i = 1; i <= 14; ++i) {
+        if(i==8)
+            continue;
+        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
+    }
+//    try
+//    {
+//        tree->find(20);
+//    }catch(...){
+//        std::cout << "NOT FOUND" << std::endl;
 //    }
-//    tree->addExtra(6,3);
-//    std::cout<<"added 3 until 16" << std::endl;
-//    for (int i = 1; i <= 14; ++i) {
-//        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
-//    }
-//    tree->remove(5);
-//    std::cout<<"removed 5" << std::endl;
-//    for (int i = 1; i <= 14; ++i) {
-//        if(i==5)
-//            continue;
-//        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
-//    }
-//    tree->insert(5,5);
-//    std::cout<<"inserted 5" << std::endl;
-//    for (int i = 1; i <= 14; ++i) {
-//        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
-//    }
-//    tree->addExtra(6,1);
-//    std::cout<<"added extra 1 until 6" << std::endl;
-//    for (int i = 1; i <= 14; ++i) {
-//        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
-//    }
-//    tree->addExtra(5,-1);
-//    std::cout<<"added extra -1 until 5" << std::endl;
-//    for (int i = 1; i <= 14; ++i) {
-//        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
-//    }
-//    tree->remove(8);
-//    std::cout<<"removed 8" << std::endl;
-//    for (int i = 1; i <= 14; ++i) {
-//        if(i==8)
-//            continue;
-//        std::cout << " for key: "<< i << " extra is " << tree->findSum(i) << std::endl;
-//    }
-////    try
-////    {
-////        tree->find(20);
-////    }catch(...){
-////        std::cout << "NOT FOUND" << std::endl;
-////    }
-//    for (int i = 1; i < 14; ++i) {
-//        std::cout << " for rank: "<< i << " key is " << *(tree->select(i)) << std::endl;
-//    }
-//    for (int i = 1; i <= 14; ++i) {
-//        if(i==8)
-//            continue;
-//        std::cout << " for key: "<< i << " rank is " << tree->Rank(i) << std::endl;
-//    }
-//
-//
-//
-//    return 0;
-//}
+    for (int i = 1; i < 14; ++i) {
+        std::cout << " for rank: "<< i << " key is " << *(tree->select(i)) << std::endl;
+    }
+    for (int i = 1; i <= 14; ++i) {
+        if(i==8)
+            continue;
+        std::cout << " for key: "<< i << " rank is " << tree->Rank(i) << std::endl;
+    }
+    tree->inOrderTraversal();
+    for (int i = 1; i <= 14; ++i) {
+        if(i==8)
+            continue;
+        std::cout << " for key: "<< i << " max extraW is " << tree->findMaxWins(i) << std::endl;
+    }
+
+
+
+    return 0;
+}
 

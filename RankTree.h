@@ -30,7 +30,16 @@ public:
     void addExtraSingle(Cond& end, int toAdd);
     RankNode<T,Cond>* findClosestSmall(Cond& toFind);
     RankNode<T,Cond>* findClosestBig(Cond& toFind);
+    int findMaxWins(const Cond& toFind);
 };
+
+template<class T, class Cond>
+int RankTree<T,Cond>::findMaxWins(const Cond& toFind){
+    if(this->root == nullptr)
+        throw KeyNotFound();
+    return this->root->findMaxWins(toFind,0);
+}
+
 template<class T,class Cond>
 RankNode<T,Cond>* RankTree<T,Cond>::findClosestSmall(Cond& toFind)
 {
@@ -52,7 +61,7 @@ template<class T,class Cond>
 void RankTree<T,Cond>::addExtraSingle(Cond &end, int toAdd){
     if(this->root == nullptr)
         throw KeyNotFound();
-    this->root->addExtraSingle(end,toAdd);
+    this->root->addExtraSingle(end,toAdd,0);
 }
 
 template<class T,class Cond>
