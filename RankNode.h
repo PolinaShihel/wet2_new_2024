@@ -22,16 +22,19 @@ class RankNode {
     T data;
     int rank;
     int extra;
-
+    int extraW;
+    RankNode *bigExtraW;
 public:
     RankNode(Cond key, T data): key(key), right(nullptr),left(nullptr), height(0),
-                                data(data), rank(1),extra(0){};
+                                data(data), rank(1),extra(0),extraW(key),bigExtraW(this){};
     RankNode(Cond key, T data,int rank): key(key), right(nullptr),left(nullptr), height(0),
-                                         data(data),rank(rank),extra(0){};
+                                         data(data),rank(rank),extra(0),extraW(key),bigExtraW(this){};
     RankNode(Cond key, T data,int rank, int extra): key(key), right(nullptr),left(nullptr), height(0),
-                                         data(data),rank(rank),extra(extra){};
+                                         data(data),rank(rank),extra(extra),extraW(key),bigExtraW(this){};
+    RankNode(Cond key, T data,int rank, int extra, int extraW): key(key), right(nullptr),left(nullptr), height(0),
+                                                    data(data),rank(rank),extra(extra),extraW(extraW){}; //NOT SURE NEEDED
     RankNode *insertNode(const Cond &key, const T &data, int sum);
-    RankNode *deleteNode(const Cond &newKey);
+    RankNode *deleteNode(const Cond &newKey, int sum);
     RankNode *findNode(const Cond &newKey);
     //Rotations
     RankNode *rotate();
@@ -65,8 +68,35 @@ public:
     T* select(int rank, int sum);
     int Rank(Cond& toFind);
     void addExtraSingle(Cond &end, int toAdd);
+    RankNode<T,Cond>* findClosestSmall(Cond& toFind, RankNode<T,Cond>* current);
+    RankNode<T,Cond>* findClosestBig(Cond& toFind, RankNode<T,Cond>* current);
 
     };
+template<class T,class Cond>
+RankNode<T,Cond>* RankNode<T,Cond>::findClosestSmall(Cond& toFind, RankNode<T,Cond>* current)
+{
+    if(this == nullptr && current == nullptr)
+        throw KeyNotFound();
+    if(this == nullptr)
+        return current;
+    if(this->key < toFind)
+        return this->right->findClosestSmall(toFind, current);
+    else if(this->key > toFind)
+        return this->left->findClosestSmall(toFind, this);
+}
+
+template<class T,class Cond>
+RankNode<T,Cond>* RankNode<T,Cond>::findClosestBig(Cond& toFind, RankNode<T,Cond>* current)
+{
+    if(this == nullptr && current == nullptr)
+        throw KeyNotFound();
+    if(this == nullptr)
+        return current;
+    if(this->key < toFind)
+        return this->right->findClosestBig(toFind, this);
+    else if(this->key > toFind)
+        return this->left->findClosestBig(toFind, current);
+}
 
 template<class T,class Cond>
 void RankNode<T,Cond>::addExtraSingle(Cond &end, int toAdd) {
@@ -161,6 +191,17 @@ RankNode<T,Cond> *RankNode<T,Cond>::insertNode(const Cond &newKey, const T &newD
         throw KeyExists();
     this->calcHeight();
     this->rank++;
+    int str = this->getKey();
+    this->extraW = sum + str;
+    this->bigExtraW = this;
+    if(this->left != nullptr && this->left->extraW > this->extraW) {
+        this->extraW = this->left->extraW;
+        this->bigExtraW = this->left;
+    }
+    if(this->right != nullptr && this->right->extraW > this->extraW) {
+        this->bigExtraW = this->right;
+        this->extraW = this->right->extraW;
+    }
     return this->rotate();
 }
 
@@ -179,26 +220,23 @@ void RankNode<T, Cond>::setRank(int toSet)
 //}
 
 template<class T, class Cond>
-RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
+RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey, int sum)
 {
     RankNode<T, Cond> *toSwap;
     if (this == nullptr)
         throw KeyNotFound();
+    sum+=this->extra;
     if (newKey < this->key) {
         if (this->left == nullptr)
             throw KeyNotFound();
-        this->left = this->left->deleteNode(newKey);
-        this->calcHeight();
-        this->rank--;
-        return this->rotate();
-    } else if (newKey > this->key) {
+        this->left = this->left->deleteNode(newKey, sum);
+    }
+    else if (newKey > this->key) {
         if (this->right == nullptr)
             throw KeyNotFound();
-        this->right = this->right->deleteNode(newKey);
-        this->calcHeight();
-        this->rank--;
-        return this->rotate();
-    } else {
+        this->right = this->right->deleteNode(newKey, sum);
+    }
+    else {
         if ((this->left == nullptr) && (this->right == nullptr)) {
             delete this;
             return nullptr;
@@ -218,8 +256,6 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
             RankNode<T, Cond> *temp;
             int tempRank;
             if (this->left->right != nullptr) {
-//                this->right->extra+=this->extra;
-//                this->left->extra+=this->extra;
                 RankNode<T, Cond> *biggestFather = findBiggestParent(this->left);
                 toSwap = biggestFather->right;
                 temp = toSwap->left;
@@ -254,11 +290,25 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey)
                 this->rank = tempRank;
             }
         }
-        toSwap->left = toSwap->left->deleteNode(newKey);
+        toSwap->left = toSwap->left->deleteNode(newKey,0); //TODO:CHNAGE THIS
         toSwap->calcHeight();
         toSwap->rank--;
         return toSwap->rotate();
     }
+    int str = this->getKey();
+    this->extraW = sum + str;
+    this->bigExtraW = this;
+    if(this->left != nullptr && this->left->extraW > this->extraW) {
+        this->extraW = this->left->extraW;
+        this->bigExtraW = this->left;
+    }
+    if(this->right != nullptr && this->right->extraW > this->extraW) {
+        this->bigExtraW = this->right;
+        this->extraW = this->right->extraW;
+    }
+    this->calcHeight();
+    this->rank--;
+    return this->rotate();
 }
 
 template<class T, class Cond>

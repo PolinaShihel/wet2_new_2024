@@ -338,12 +338,17 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
 //    static int i = 0;
 //    return (i++==0) ? 11 : 2;
     try {
-        if(lowPower <= 0 || highPower <= 0 || highPower <= lowPower)
-            return StatusType::INVALID_INPUT;
+//        if(lowPower <= 0 || highPower <= 0 || highPower <= lowPower)
+//            return StatusType::INVALID_INPUT;
+//        StrCond smallCond = StrCond(lowPower, -1);
+//        StrCond BigCond = StrCond(highPower, );
+//        RankNode<StrCond,int>* smallest = this->teamsTree.findClosestSmall(smallCond);
 
     }
     catch(std::bad_alloc &error) {
         return StatusType::ALLOCATION_ERROR;
+    }catch(KeyNotFound &error){
+        return StatusType::FAILURE;
     }
     return StatusType::SUCCESS;
 }

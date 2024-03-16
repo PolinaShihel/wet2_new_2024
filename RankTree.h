@@ -28,19 +28,23 @@ public:
     T* select(int rank);
     int Rank(Cond& key);
     void addExtraSingle(Cond& end, int toAdd);
-    T* findClosestSmall(Cond& toFind);
-    T* findClosestBig(Cond& toFind);
+    RankNode<T,Cond>* findClosestSmall(Cond& toFind);
+    RankNode<T,Cond>* findClosestBig(Cond& toFind);
 };
 template<class T,class Cond>
-T* RankTree<T,Cond>::findClosestSmall(Cond& toFind)
+RankNode<T,Cond>* RankTree<T,Cond>::findClosestSmall(Cond& toFind)
 {
-
+    if(this->root == nullptr)
+        throw KeyNotFound();
+    return this->root->findClosestSmall(toFind, nullptr);
 }
 
 template<class T,class Cond>
-T* RankTree<T,Cond>::findClosestBig(Cond& toFind)
+RankNode<T,Cond>* RankTree<T,Cond>::findClosestBig(Cond& toFind)
 {
-
+    if(this->root == nullptr)
+        return KeyNotFound();
+    return this->root->findClosestBig(toFind, nullptr);
 }
 
 
@@ -128,7 +132,7 @@ T*  RankTree<T,Cond>::find(const Cond &key) {
 
 template<class T, class Cond>
 void RankTree<T,Cond>::remove(const Cond& key) {
-    this->root = this->root->deleteNode(key);
+    this->root = this->root->deleteNode(key,0);
     this->size--;
     this->smallest = this->getSmallest();
     this->biggest = this->getBiggest();
