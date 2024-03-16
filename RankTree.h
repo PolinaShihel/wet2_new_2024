@@ -28,7 +28,21 @@ public:
     T* select(int rank);
     int Rank(Cond& key);
     void addExtraSingle(Cond& end, int toAdd);
+    T* findClosestSmall(Cond& toFind);
+    T* findClosestBig(Cond& toFind);
 };
+template<class T,class Cond>
+T* RankTree<T,Cond>::findClosestSmall(Cond& toFind)
+{
+
+}
+
+template<class T,class Cond>
+T* RankTree<T,Cond>::findClosestBig(Cond& toFind)
+{
+
+}
+
 
 template<class T,class Cond>
 void RankTree<T,Cond>::addExtraSingle(Cond &end, int toAdd){

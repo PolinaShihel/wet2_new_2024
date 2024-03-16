@@ -246,7 +246,8 @@ output_t<int> olympics_t::num_wins_for_team(int teamId)
 
 output_t<int> olympics_t::get_highest_ranked_team()
 {
-    return highest_ranked_team_rank;
+    return this->teamsTree.getBiggest() != nullptr ? this->teamsTree.getBiggest()->getNodeData()->get_power(): 0;
+//    return highest_ranked_team_rank;
 }
 
 StatusType olympics_t::unite_teams(int teamId1, int teamId2)
@@ -316,7 +317,7 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         team2->destroy_players_trees();
         this->teamsTree.remove(team1cond);
         this->teamsTree.remove(team2cond);
-        this->teamsHash.remove(team2cond);
+        this->teamsHash.remove(teamId2);
         StrCond teamCond = StrCond(team1->get_power(),teamId1);
         this->teamsTree.insert(teamCond,team1);
         this->teamsTree.addExtraSingle(teamCond,wins);
@@ -332,7 +333,17 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
 
 output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
 {
+
     // TODO: Your code goes here
-    static int i = 0;
-    return (i++==0) ? 11 : 2;
+//    static int i = 0;
+//    return (i++==0) ? 11 : 2;
+    try {
+        if(lowPower <= 0 || highPower <= 0 || highPower <= lowPower)
+            return StatusType::INVALID_INPUT;
+
+    }
+    catch(std::bad_alloc &error) {
+        return StatusType::ALLOCATION_ERROR;
+    }
+    return StatusType::SUCCESS;
 }
