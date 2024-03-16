@@ -1,6 +1,6 @@
 #include "olympics24a2.h"
 
-olympics_t::olympics_t() : teamsHash(), highest_ranked_team_id(-1),highest_ranked_team_rank(-1), number_of_teams(0) ,teamsTree() {}
+olympics_t::olympics_t(): teamsHash(), highest_ranked_team_id(-1),highest_ranked_team_rank(-1), number_of_teams(0) ,teamsTree() {}
 
 olympics_t::~olympics_t()
 {
@@ -279,7 +279,7 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         this->teamsHash.remove(team2cond);
         StrCond teamCond = StrCond(team1->get_power(),teamId1);
         this->teamsTree.insert(teamCond,team1);
-        //TODO:NEED TO FINISH
+
     }
     catch(std::bad_alloc &error){
         return StatusType::ALLOCATION_ERROR;

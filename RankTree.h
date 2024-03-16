@@ -32,7 +32,6 @@ public:
 
 template<class T,class Cond>
 void RankTree<T,Cond>::addExtraSingle(Cond &end, int toAdd){
-{
     if(this->root == nullptr)
         throw KeyNotFound();
     this->root->AddExtraSingle(end,toAdd);
