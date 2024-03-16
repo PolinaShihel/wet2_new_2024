@@ -28,11 +28,15 @@ public:
     int get_number_of_players();
     int get_entry();
     void add_entry();
+    void set_entry(int newEntry);
     void set_number_of_players(int toAdd);
     void set_power(int toSet);
     void set_wins(int toAdd);
     void calc_team_power();
-
+    AVLTree<ContestantEntry*, int> *getEntryTree();
+    RankTree<ContestantStr*, StrCond>* getStrTree();
+    void setStrTree(RankTree<ContestantStr*, StrCond>* strTree);
+    void setEntryTree(AVLTree<ContestantEntry*, int> *treeEntry);
 
     void destroy_players_trees(); //TODO
     void add_contestant_to_team(Contestant * contestant);

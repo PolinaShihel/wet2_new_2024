@@ -55,7 +55,7 @@ public:
     int balanceFactor() const;
     void calcHeight();
     RankNode *isExist(const Cond &newKey);
-    //void setRank(int rank);
+    void setRank(int rank);
     //int getRank();
     int getWeight();
     void AddExtra(int end, int toAdd);
@@ -164,12 +164,12 @@ RankNode<T,Cond> *RankNode<T,Cond>::insertNode(const Cond &newKey, const T &newD
     return this->rotate();
 }
 
-//template<class T, class Cond>
-//void RankNode<T, Cond>::setRank(int toSet)
-//{
-//    this->rank = toSet;
-//}
-//
+template<class T, class Cond>
+void RankNode<T, Cond>::setRank(int toSet)
+{
+    this->rank = toSet;
+}
+
 //template<class T, class Cond>
 //int RankNode<T, Cond>::getRank()
 //{

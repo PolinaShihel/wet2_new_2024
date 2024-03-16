@@ -34,7 +34,7 @@ template<class T,class Cond>
 void RankTree<T,Cond>::addExtraSingle(Cond &end, int toAdd){
     if(this->root == nullptr)
         throw KeyNotFound();
-    this->root->AddExtraSingle(end,toAdd);
+    this->root->addExtraSingle(end,toAdd);
 }
 
 template<class T,class Cond>
@@ -79,6 +79,7 @@ RankNode<T,Cond>* RankTree<T,Cond>::sortedArrayTo( RankNode<T, Cond>* arr[],
         return nullptr;
     int mid = start + (end - start) / 2;
     RankNode<T,Cond>* currNode =  new RankNode<T,Cond>(arr[mid]->getKey(),arr[mid]->getNodeData(), end - start + 1);
+    currNode->setRank(end-start + 1);
     currNode->setLeft(sortedArrayTo(arr, start, mid - 1));
     currNode->setRight(sortedArrayTo(arr, mid + 1, end ));
     currNode->calcHeight();

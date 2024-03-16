@@ -15,7 +15,7 @@ void Team::set_power(int toSet) { this->power = toSet; }
 void Team::set_wins(int toAdd) { this->wins +=toAdd; }
 int Team::get_entry() { return entry; }
 void Team::add_entry() { this->entry +=1; }
-
+void Team::set_entry(int newEntry){this->entry=newEntry;}
 void Team::calc_team_power() {
     if(contestantTreeStr->getSize() == 0 || this->get_number_of_players() == 0 ) {
         this->set_power(0);
@@ -30,8 +30,26 @@ void Team::calc_team_power() {
         this->set_power(power);
     }
 }
-void Team::destroy_players_trees() { //TODO
 
+AVLTree<ContestantEntry*, int> *Team::getEntryTree(){
+    return this->contestantTreeEntry;
+}
+
+RankTree<ContestantStr*, StrCond>* Team::getStrTree(){
+    return this->contestantTreeStr;
+}
+
+void Team::setStrTree(RankTree<ContestantStr*, StrCond>* strTree){
+    this->contestantTreeStr = strTree;
+}
+
+void Team::setEntryTree(AVLTree<ContestantEntry*, int> *treeEntry){
+    this->contestantTreeEntry = treeEntry;
+}
+
+void Team::destroy_players_trees() {
+    delete this->contestantTreeEntry;
+    delete this->contestantTreeStr;
 }
 
 void Team::add_contestant_to_team(Contestant * contestant) {

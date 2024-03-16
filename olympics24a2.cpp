@@ -234,9 +234,25 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         Team* team2 = *(teamsHash.find(teamId2));
         int team1Size = team1->get_number_of_players();
         int team2Size = team2->get_number_of_players();
-        //TODO:check if one (or both) of the teams is empty
         StrCond team1cond = StrCond(team1->get_power(),teamId1);
         StrCond team2cond = StrCond(team2->get_power(),teamId2);
+        if(team2Size == 0){
+            this->teamsHash.remove(teamId2);
+            return StatusType::SUCCESS;
+        }
+        if(team1Size == 0){
+            team1->setEntryTree(team2->getEntryTree());
+            team1->setStrTree(team2->getStrTree());
+            team1->set_power(team2->get_power());
+            team1->set_number_of_players(team2->get_number_of_players());
+            team1->set_entry(team2->get_entry());
+            team1cond = StrCond(team1->get_power(),teamId1);
+            this->teamsHash.remove(teamId2);
+            this->teamsTree.remove(team2cond);
+            this->teamsTree.insert(team1cond, team1);
+            return StatusType::SUCCESS;
+        }
+        int wins = team1->get_wins();
         Node<ContestantEntry*, int> *team1Entry[team1Size];
         RankNode<ContestantStr*, StrCond> *team1Str[team1Size];
         Node<ContestantEntry*, int> *team2Entry[team2Size];
@@ -279,7 +295,7 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         this->teamsHash.remove(team2cond);
         StrCond teamCond = StrCond(team1->get_power(),teamId1);
         this->teamsTree.insert(teamCond,team1);
-
+        this->teamsTree.addExtraSingle(teamCond,wins);
     }
     catch(std::bad_alloc &error){
         return StatusType::ALLOCATION_ERROR;
