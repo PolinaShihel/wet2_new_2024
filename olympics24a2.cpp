@@ -235,8 +235,8 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         int team1Size = team1->get_number_of_players();
         int team2Size = team2->get_number_of_players();
         //TODO:check if one (or both) of the teams is empty
-        StrCond* team1cond = new StrCond(team1->get_power(),teamId1);
-        StrCond* team2cond = new StrCond(team2->get_power(),teamId2);
+        StrCond team1cond = StrCond(team1->get_power(),teamId1);
+        StrCond team2cond = StrCond(team2->get_power(),teamId2);
         Node<ContestantEntry*, int> *team1Entry[team1Size];
         RankNode<ContestantStr*, StrCond> *team1Str[team1Size];
         Node<ContestantEntry*, int> *team2Entry[team2Size];
@@ -262,9 +262,10 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         }
         int latestTotal = teamTotalEntry[totalSize-1]->getNodeData()->getConPtr()->get_entry();
         int indexT1 = 0, indexT2 = 0, currIndex = 0;
+
         while((indexT1<team1Size)||(indexT2<team2Size))
         {
-            if((indexT2>=team2Size)||((indexT1<team1Size)&&
+            if((indexT2>=team2Size) || ((indexT1<team1Size)&&
                     (team1Str[indexT1]->getKey()<team2Str[indexT2]->getKey())))
                 teamTotalStr[currIndex++] = team1Str[indexT1++];
             else if((indexT1>=team1Size)||((indexT2<team2Size)&&
@@ -273,13 +274,11 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         }
         team1->setTrees(teamTotalEntry,teamTotalStr,totalSize, latestTotal + 1);
         team2->destroy_players_trees();
-        this->teamsTree.remove(*team1cond);
-        this->teamsTree.remove(*team2cond);
-        this->teamsHash.remove(*team2cond);
-        delete team1cond;
-        delete team2cond;
-        StrCond* teamCond = new StrCond(team1->get_power(),teamId1);
-        this->teamsTree.insert(*teamCond,team1);
+        this->teamsTree.remove(team1cond);
+        this->teamsTree.remove(team2cond);
+        this->teamsHash.remove(team2cond);
+        StrCond teamCond = StrCond(team1->get_power(),teamId1);
+        this->teamsTree.insert(teamCond,team1);
         //TODO:NEED TO FINISH
     }
     catch(std::bad_alloc &error){

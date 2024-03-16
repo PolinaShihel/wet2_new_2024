@@ -64,7 +64,26 @@ public:
     int findSum(const Cond& toFind, int sum);
     T* select(int rank, int sum);
     int Rank(Cond& toFind);
-};
+    void addExtraSingle(Cond &end, int toAdd);
+
+    };
+
+template<class T,class Cond>
+void RankNode<T,Cond>::addExtraSingle(Cond &end, int toAdd) {
+    if(this== nullptr)
+        throw KeyNotFound();
+    if(this->key < end)
+        return this->right->addExtraSingle(end,toAdd);
+    else if(this->key > end)
+        return this->left->addExtraSingle(end, toAdd);
+    else{
+        this->extra+=toAdd;
+        if(this->left!= nullptr)
+            this->left->extra-=toAdd;
+        if(this->right!= nullptr)
+            this->right->extra-=toAdd;
+    }
+}
 
 template<class T,class Cond>
 int RankNode<T,Cond>::Rank(Cond &toFind) {
