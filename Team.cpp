@@ -63,6 +63,7 @@ void Team::add_contestant_to_team(Contestant * contestant) {
         toAddEntry->setStrPtr(toAddStr);
 
         this->set_number_of_players(1);
+
         StrCond strCond = StrCond(str,ent);
         contestantTreeStr->insert(strCond,toAddStr);
 

@@ -51,16 +51,17 @@ StatusType olympics_t::remove_team(int teamId)
         number_of_teams--;
 
         if(highest_ranked_team_id == teamId){
-            if(teamsTree.getSize() == 0 ) {
+            if(teamsTree.getSize() == 0 ) { // there are teams but they are empty
                 highest_ranked_team_id = 0;
                 highest_ranked_team_rank = 0;
             }
             else
                 if (number_of_teams != 0) {
                     highest_ranked_team_id = teamsTree.getBiggest()->getNodeData()->get_team_id();
-                    highest_ranked_team_rank = teamsTree.getBiggest()->getNodeData()->get_power() + teamsTree.getBiggest()->getNodeData()->get_wins() ;
+                    StrCond strCond = StrCond(teamsTree.getBiggest()->getNodeData()->get_power(),teamsTree.getBiggest()->getNodeData()->get_team_id());
+                    highest_ranked_team_rank = teamsTree.getBiggest()->getNodeData()->get_power() + teamsTree.findSum(strCond) ;
                 }
-                else {
+                else {  // no teams at all
                     highest_ranked_team_id = -1;
                     highest_ranked_team_rank = 0;
                 }
@@ -90,6 +91,7 @@ StatusType olympics_t::add_player(int teamId, int playerStrength)
         ptrTeam->add_contestant_to_team(con);
 
         StrCond strCond2 = StrCond(ptrTeam->get_power(),teamId); //after adding
+
         if (ptrTeam->get_number_of_players() > 1) {
             this->teamsTree.remove(strCond1);
         }
@@ -126,14 +128,23 @@ StatusType olympics_t::remove_newest_player(int teamId)
         StrCond strCond2 = StrCond(ptrTeam->get_power(),teamId); // str cond after change
 
         this->teamsTree.remove(strCond1);
-        this->teamsTree.insert(strCond2,ptrTeam);
 
-        if(teamId == highest_ranked_team_id)
+        if(ptrTeam->get_number_of_players() > 0) {
+            this->teamsTree.insert(strCond2, ptrTeam);
+        }
+
+        if(teamId == highest_ranked_team_id && teamsTree.getSize() > 0)
         {
             highest_ranked_team_rank = ptrTeam->get_power()+ ptrTeam->get_wins();
             Team* current_highest = teamsTree.getBiggest()->getNodeData();
             highest_ranked_team_compare(current_highest); // also updates
         }
+
+        if(teamsTree.getSize() == 0) {
+            highest_ranked_team_rank = 0;
+            highest_ranked_team_id = 0;
+        }
+
 
 
     } catch (std::bad_alloc &error) {
@@ -158,17 +169,25 @@ output_t<int> olympics_t::play_match(int teamId1, int teamId2)
         Team* ptrTeam2= *(teamsHash.find(teamId2));
         int power_team1 = ptrTeam1->get_power();
         int power_team2 = ptrTeam2->get_power();
+        StrCond strCond1 =StrCond(power_team1,ptrTeam1->get_team_id());
+
+        StrCond strCond2 =StrCond(power_team2,ptrTeam2->get_team_id());
+
 
         if(power_team1 > power_team2){
-            ptrTeam1->set_wins(1);
+            teamsTree.addExtraSingle(strCond1,1);
+
         }   else {
             if (power_team1 < power_team2) {
-                ptrTeam2->set_wins(1);
+                teamsTree.addExtraSingle(strCond2,1);
+
             } else {
                 if(ptrTeam1->get_team_id() > ptrTeam2->get_team_id()) {
-                    ptrTeam2->set_wins(1);
+                    teamsTree.addExtraSingle(strCond2,1);
+
                 } else {
-                    ptrTeam1->set_wins(1);
+                    teamsTree.addExtraSingle(strCond1,1);
+
                 }
 
             }
@@ -191,13 +210,17 @@ void olympics_t::highest_ranked_team_compare(Team* toCompare) // also updates if
 {
     if(highest_ranked_team_id == 0){
         highest_ranked_team_id = toCompare->get_team_id();
-        highest_ranked_team_rank = toCompare->get_power() + toCompare->get_wins();
+        StrCond strCond = StrCond(toCompare->get_power(),toCompare->get_team_id());
+        highest_ranked_team_rank = toCompare->get_power() + teamsTree.findSum(strCond);
 
     } else {
-        Team *currentHighest = *(teamsHash.find(highest_ranked_team_id));
-        if (highest_ranked_team_rank < toCompare->get_power() + toCompare->get_wins()) {
+
+        StrCond strCond = StrCond(toCompare->get_power(),toCompare->get_team_id());
+        int temp = toCompare->get_power() + teamsTree.findSum(strCond);
+
+        if (highest_ranked_team_rank < temp) {
             highest_ranked_team_id = toCompare->get_team_id();
-            highest_ranked_team_rank = toCompare->get_power() + toCompare->get_wins();
+            highest_ranked_team_rank = temp;
         }
     }
 }
@@ -210,7 +233,8 @@ output_t<int> olympics_t::num_wins_for_team(int teamId)
     try {
 
         Team* ptrTeam= *(teamsHash.find(teamId));
-        wins = ptrTeam->get_wins();
+        StrCond strCond = StrCond(ptrTeam->get_power(),teamId);
+        wins= teamsTree.findSum(strCond);
 
     } catch (std::bad_alloc &error) {
         return StatusType::ALLOCATION_ERROR;
