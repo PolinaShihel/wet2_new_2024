@@ -43,7 +43,7 @@ template<class T,class Cond>
 RankNode<T,Cond>* RankTree<T,Cond>::findClosestBig(Cond& toFind)
 {
     if(this->root == nullptr)
-        return KeyNotFound();
+        throw KeyNotFound();
     return this->root->findClosestBig(toFind, nullptr);
 }
 
