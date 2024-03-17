@@ -115,7 +115,7 @@ StatusType olympics_t::remove_newest_player(int teamId)
             return StatusType::FAILURE;
 
         StrCond strCond1 = StrCond(ptrTeam->get_power(),teamId); // str cond before change
-
+        int wins = this->num_wins_for_team(teamId).ans();
         ptrTeam->remove_newest_player();
         ptrTeam->calc_team_power();
 
@@ -125,16 +125,8 @@ StatusType olympics_t::remove_newest_player(int teamId)
 
         if(ptrTeam->get_number_of_players() > 0) {
             this->teamsTree.insert(strCond2, ptrTeam);
+            this->teamsTree.addExtraSingle(strCond2, wins);
         }
-
-        if( teamsTree.getSize() > 0){
-            //highest_ranked_team_compare(); // also updates
-        }
-        if(teamsTree.getSize() == 0) {
-            highest_ranked_team_rank = 0;
-        }
-
-
 
     } catch (std::bad_alloc &error) {
         return StatusType::ALLOCATION_ERROR;
@@ -211,10 +203,18 @@ output_t<int> olympics_t::num_wins_for_team(int teamId)
     return wins;
 }
 
-output_t<int> olympics_t::get_highest_ranked_team()
-{
-    return this->teamsTree.getBiggest() != nullptr ? this->teamsTree.getBiggest()->getNodeData()->get_power(): 0;
-//    return highest_ranked_team_rank;
+output_t<int> olympics_t::get_highest_ranked_team() {
+    try {
+        if (this->teamsTree.getSize() == 0) {
+            if (this->number_of_teams != 0)
+                return 0;
+            return -1;
+        }
+        return this->teamsTree.getMaxRank();
+    }
+    catch (std::bad_alloc &error) {
+        return StatusType::ALLOCATION_ERROR;
+    }
 }
 
 StatusType olympics_t::unite_teams(int teamId1, int teamId2)
@@ -244,7 +244,7 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
             this->teamsTree.insert(team1cond, team1);
             return StatusType::SUCCESS;
         }
-        int wins = team1->get_wins();
+        int wins = this->num_wins_for_team(teamId1).ans();
         Node<ContestantEntry*, int> *team1Entry[team1Size];
         RankNode<ContestantStr*, StrCond> *team1Str[team1Size];
         Node<ContestantEntry*, int> *team2Entry[team2Size];
@@ -315,10 +315,10 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
     if(lowPower <= 0 || highPower <= 0 || highPower <= lowPower)
         return StatusType::INVALID_INPUT;
     try {
-        StrCond condLow = StrCond(lowPower,1);
-        StrCond condHigh = StrCond(lowPower,1);
-        Team *rankLow = teamsTree.findClosestBig(condLow)->getNodeData();
-        Team *rankHigh = teamsTree.findClosestSmall(condHigh)->getNodeData();
+        StrCond condLow = StrCond(lowPower,-1);
+        StrCond condHigh = StrCond(lowPower,-1);
+        Team *rankLow = teamsTree.findClosestSmall(condLow)->getNodeData();
+        Team *rankHigh = teamsTree.findClosestBig(condHigh)->getNodeData();
 
         condLow = StrCond(rankLow->get_power(),rankLow->get_team_id());
         condHigh = StrCond(rankHigh->get_power(),rankHigh->get_team_id());
