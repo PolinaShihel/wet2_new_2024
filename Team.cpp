@@ -2,17 +2,15 @@
 
 
 Team::Team(int teamId) : teamId(teamId) , power(0) ,
-                        number_of_players(0) , wins(0) , entry(0) ,
+                        number_of_players(0) , entry(0) ,
                         contestantTreeEntry( new AVLTree<ContestantEntry* , int>()) ,
                         contestantTreeStr( new RankTree<ContestantStr* , StrCond>()){}
 
 int Team::get_power() { return power; }
 int Team::get_team_id() { return teamId; }
-int Team::get_wins() { return wins; }
 int Team::get_number_of_players(){ return number_of_players; }
 void Team::set_number_of_players(int toAdd) { this->number_of_players += toAdd; }
 void Team::set_power(int toSet) { this->power = toSet; }
-void Team::set_wins(int toAdd) { this->wins +=toAdd; }
 int Team::get_entry() { return entry; }
 void Team::add_entry() { this->entry +=1; }
 void Team::set_entry(int newEntry){this->entry=newEntry;}

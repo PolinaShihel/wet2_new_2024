@@ -13,7 +13,6 @@ class Team
     int teamId;
     int power;
     int number_of_players;
-    int wins;
     int entry;
     AVLTree<ContestantEntry*, int> *contestantTreeEntry;
     RankTree<ContestantStr*, StrCond>* contestantTreeStr;
@@ -24,14 +23,13 @@ public:
     ~Team() = default;
     int get_power();
     int get_team_id();
-    int get_wins();
     int get_number_of_players();
     int get_entry();
     void add_entry();
     void set_entry(int newEntry);
     void set_number_of_players(int toAdd);
     void set_power(int toSet);
-    void set_wins(int toAdd);
+
     void calc_team_power();
     AVLTree<ContestantEntry*, int> *getEntryTree();
     RankTree<ContestantStr*, StrCond>* getStrTree();

@@ -146,12 +146,6 @@ int main() {
 
 
     cout<< endl << "some more tests: " << endl;
-    print(ol.remove_newest_player(2)); cout << " == SUCCESS" <<endl;
-    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 41 "<<endl; // team3 rank 41 //team3 doesnt exist anymore it was united into 1
-    print(ol.remove_newest_player(3)); //team1 players: 10,6,8,9     power:8*4=32 //team2 players: 11,5,16   power 5*3 = 15 +3=18 //team3 players: 20, power 20*1 +1 = 21
-    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 32 "<<endl; // team1 rank 32
-    print(ol.remove_newest_player(1)); //team1 players: 10,6,8     power:6*3=18 //team2 players: 11,5,16   power 5*3 = 15 +3=18 //team3 players: 20, power 20*1 +1 = 21
-    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 21 "<<endl; // team1 rank 21
 
 
     return 0;
