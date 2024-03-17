@@ -73,7 +73,13 @@ public:
     void findMax(int str, int sum);
     RankNode<T,Cond>* findMaxWins();
     int getMaxRank();
+    void setKey(const Cond& newCond);
     };
+
+template<class T,class Cond>
+void RankNode<T,Cond>::setKey(const Cond &newCond) {
+    this->key = newCond;
+}
 
 template<class T,class Cond>
 int RankNode<T,Cond>::getMaxRank() {

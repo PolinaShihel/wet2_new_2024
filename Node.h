@@ -82,7 +82,14 @@ public:
     Node *findNode(const Cond &newKey);
 
     Node *isExist(const Cond &newKey);
+
+    void setKey(const Cond &newKey);
 };
+
+template<class T, class Cond>
+void Node<T,Cond>::setKey(const Cond &newKey) {
+    this->key = newKey;
+}
 
 template<class T, class Cond>
 Node<T, Cond>::Node(const Node<T, Cond> &node) {

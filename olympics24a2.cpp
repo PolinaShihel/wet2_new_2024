@@ -242,6 +242,10 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         {
             int entry = team2Entry[i]->getNodeData()->getConPtr()->get_entry();
             team2Entry[i]->getNodeData()->getConPtr()->set_entry(entry + latestArrival);
+            team2Entry[i]->setKey(entry + latestArrival);
+            StrCond newCond = StrCond(team2Str[i]->getNodeData()->getConPtr()->get_strength(),
+                                      team2Str[i]->getNodeData()->getConPtr()->get_entry());
+            team2Str[i]->setKey(newCond);
         }
         for(int i = 0; i < team1Size;i++)
         {
