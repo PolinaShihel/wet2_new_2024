@@ -98,6 +98,7 @@ StatusType olympics_t::remove_newest_player(int teamId)
 
         StrCond strCond1 = StrCond(ptrTeam->get_power(),teamId); // str cond before change
         int wins = this->num_wins_for_team(teamId).ans();
+
         ptrTeam->remove_newest_player();
         ptrTeam->calc_team_power();
 
@@ -280,27 +281,32 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
     return StatusType::SUCCESS;
 }
 
-bool PowerOfTwo(int n)
+int PowerOfTwo(int n)
 {
     if (n == 0)
         return -1;
+    int i=0;
     while (n != 1) {
         if (n % 2 != 0)
             return -1;
         n = n / 2;
+        i++;
     }
-    return n;
+    return i;
 }
 
 output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
 {
     if(lowPower <= 0 || highPower <= 0 || highPower <= lowPower)
         return StatusType::INVALID_INPUT;
+    int winner_id=0;
     try {
         StrCond condLow = StrCond(lowPower,-1);
-        StrCond condHigh = StrCond(lowPower,-1);
+        StrCond condHigh = StrCond(highPower,-1);
         Team *rankLow = teamsTree.findClosestSmall(condLow)->getNodeData();
         Team *rankHigh = teamsTree.findClosestBig(condHigh)->getNodeData();
+
+        winner_id = rankHigh->get_team_id();
 
         condLow = StrCond(rankLow->get_power(),rankLow->get_team_id());
         condHigh = StrCond(rankHigh->get_power(),rankHigh->get_team_id());
@@ -308,10 +314,12 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
         int lowRank = teamsTree.Rank(condLow);
         int highRank = teamsTree.Rank(condHigh);
 
-        if(PowerOfTwo(highRank-lowRank) < 0)
-            return StatusType::FAILURE;
 
-        int wins = PowerOfTwo((rankHigh-rankLow));
+        int wins =PowerOfTwo(highRank-lowRank+1);
+        if(wins  < 0) {
+            return StatusType::FAILURE;
+        }
+
 
         teamsTree.addExtra(condHigh, wins);
         int i=1;
@@ -328,7 +336,7 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
         Team* temp = *(teamsTree.select(highRank-1*i));
         StrCond tempCond = StrCond(temp->get_power(),temp->get_team_id());
         teamsTree.addExtra(tempCond, -1);
-        teamsTree.addExtra(condLow, -1);
+
 
 
     } catch(std::bad_alloc &error) {
@@ -336,5 +344,5 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
     }catch(KeyNotFound &error){
         return StatusType::FAILURE;
     }
-    return StatusType::SUCCESS;
+    return winner_id;
 }

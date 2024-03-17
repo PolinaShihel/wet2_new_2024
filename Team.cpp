@@ -14,6 +14,7 @@ void Team::set_power(int toSet) { this->power = toSet; }
 int Team::get_entry() { return entry; }
 void Team::add_entry() { this->entry +=1; }
 void Team::set_entry(int newEntry){this->entry=newEntry;}
+
 void Team::calc_team_power() {
     if(contestantTreeStr->getSize() == 0 || this->get_number_of_players() == 0 ) {
         this->set_power(0);

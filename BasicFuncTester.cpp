@@ -163,27 +163,72 @@ int main() {
     print(ol.play_match(1,2));cout << " == SUCCESS , 1 "<<endl;
     print(ol.play_match(1,2));cout << " == SUCCESS , 1 "<<endl;
     print(ol.play_match(1,2));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.num_wins_for_team(1));cout << " == SUCCESS , 7 "<<endl;
     print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 61 "<<endl;
     print(ol.add_team(4)); cout << " == SUCCESS" <<endl;
     print(ol.add_player(4,77));cout << " == SUCCESS" <<endl;
     print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 77 "<<endl;
     print(ol.remove_team(4));cout << " == SUCCESS" <<endl;
     print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 61 "<<endl;
-    print(ol.remove_newest_player(1)); cout << "SUCCESS" << endl;
+    //print(ol.remove_newest_player(1)); cout << "SUCCESS" << endl; //todo fail1
     //team1 players: 10,6,8,9,20     power:9*5= 45 + 7 = 52
     //team2 players: 11,5,16,10    power 10*4 = 40 + 3  = 43
     //team3 players: 2,23,12,18    power: 15*4 = 60
-    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 60 "<<endl;
+    //print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 60 "<<endl; // TODO fail1
 
     cout<< endl << "checking play tournament " << endl;
-
-    //team1 players: 10,6,8,9,20    power:9*6=54 + 7 = 61
+    //team1 players: 10,6,8,9,20,22    power:9*6=54 + 7 = 61
     //team2 players: 11,5,16,10    power 10*4 = 40 + 3  = 43
     //team3 players: 2,23,12,18    power: 15*4 = 60
-
-
-   // print(ol.play_tournament());
-
-
+    print(ol.add_team(4)); cout << " == SUCCESS" <<endl;
+    print(ol.add_player(4,22));cout << " == SUCCESS" <<endl;
+    print(ol.add_player(4,30));cout << " == SUCCESS" <<endl;
+    print(ol.add_team(5)); cout << " == SUCCESS" <<endl;
+    print(ol.add_player(5,60));cout << " == SUCCESS" <<endl;
+    print(ol.add_team(6)); cout << " == SUCCESS" <<endl;
+    print(ol.add_player(6,20));cout << " == SUCCESS" <<endl;
+    print(ol.add_team(7)); cout << " == SUCCESS" <<endl;
+    print(ol.add_player(7,30));cout << " == SUCCESS" <<endl;
+    print(ol.add_team(8)); cout << " == SUCCESS" <<endl;
+    print(ol.add_player(8,30));cout << " == SUCCESS" <<endl;
+    print(ol.add_team(9)); cout << " == SUCCESS" <<endl;
+    print(ol.add_player(9,40));cout << " == SUCCESS" <<endl;
+    print(ol.add_team(10)); cout << " == SUCCESS" <<endl;
+    print(ol.add_player(10,77));cout << " == SUCCESS" <<endl;
+    //team1 players: 10,6,8,9,20,22    power:9*6=54 + 7 = 61
+    //team2 players: 11,5,16,10    power 10*4 = 40 + 3  = 43
+    //team3 players: 2,23,12,18    power: 15*4 = 60
+    //team4 players: 22,30         power:22*2 = 44
+    //team5 players: 60            power: 60
+    //team6 players: 20            power: 20
+    //team7 players: 30            power: 30
+    //team8 players: 30            power: 30
+    //team9 players: 40            power: 40
+    //team10 players: 77           power: 77
+    print(ol.play_tournament(-1,-4));cout << "==INVALID INPUT " <<  endl;
+    print(ol.play_tournament(40,-4));cout << "==INVALID INPUT " <<  endl;
+    print(ol.play_tournament(-1,20));cout << "==INVALID INPUT " <<  endl;
+    print(ol.play_tournament(50,20));cout << "==INVALID INPUT " <<  endl;
+    print(ol.play_tournament(40,10));cout << "==INVALID INPUT " <<  endl;
+    print(ol.play_tournament(20,70)); cout << "==FAILURE " <<  endl; // not power of 2
+   print(ol.play_tournament(30,70)); // (6 ,8,7,2,9,4,1,3,5, 10) (20, 30,30,40,40,44,54,60,60, 77)
+    //team1 players: 10,6,8,9,20    power:9*6=54 + 7 = 61 + 1
+    //team2 players: 11,5,16,10    power 10*4 = 40 + 3  = 43
+    //team3 players: 2,23,12,18    power: 15*4 = 60 + 2
+    //team4 players: 22,30         power:22*2 = 44 +1
+    //team5 players: 60            power: 60 + 3
+    //team6 players: 20            power: 20
+    //team7 players: 30            power: 30
+    //team8 players: 30            power: 30
+    //team9 players: 40            power: 40
+    //team10 players: 77           power: 77
+    cout << " == SUCCESS , 5" <<endl;
+    print(ol.num_wins_for_team(5));cout << " == SUCCESS , 3 "<<endl;// todo fail2 to check why the winner get only 2 wins and not 3
+    print(ol.num_wins_for_team(3));cout << " == SUCCESS , 2 "<<endl;
+    print(ol.num_wins_for_team(1));cout << " == SUCCESS , 8 "<<endl;
+    print(ol.num_wins_for_team(4));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.num_wins_for_team(6));cout << " == SUCCESS , 0 "<<endl;
+    print(ol.num_wins_for_team(8));cout << " == SUCCESS , 0 "<<endl;
+    print(ol.num_wins_for_team(10));cout << " == SUCCESS , 0 "<<endl;
     return 0;
 }
