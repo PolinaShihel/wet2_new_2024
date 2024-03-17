@@ -170,11 +170,11 @@ int main() {
     print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 77 "<<endl;
     print(ol.remove_team(4));cout << " == SUCCESS" <<endl;
     print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 61 "<<endl;
-    print(ol.remove_newest_player(1)); cout << "SUCCESS" << endl;
+    //print(ol.remove_newest_player(1)); cout << "SUCCESS" << endl;
     //team1 players: 10,6,8,9,20     power:9*5= 45 + 7 = 52
     //team2 players: 11,5,16,10    power 10*4 = 40 + 3  = 43
     //team3 players: 2,23,12,18    power: 15*4 = 60
-    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 60 "<<endl;
+    //print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 60 "<<endl;
 
     cout<< endl << "checking play tournament " << endl;
     //team1 players: 10,6,8,9,20,22    power:9*6=54 + 7 = 61

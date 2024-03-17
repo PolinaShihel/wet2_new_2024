@@ -61,8 +61,8 @@ public:
     void setRank(int rank);
     //int getRank();
     int getWeight();
-    void AddExtra(int end, int toAdd);
-    void AddExtraAux(int end, int toAdd, int prevDirection, int sum);
+    void AddExtra(const Cond& end, int toAdd);
+    void AddExtraAux(const Cond& end, int toAdd, int prevDirection, int sum);
     void inOrderTraversal(int depth);
     int findSum(const Cond& toFind, int sum);
     T* select(int rank, int sum);
@@ -553,7 +553,7 @@ RankNode<T, Cond> *RankNode<T, Cond>::findSmallest() {
 }
 
 template<class T, class Cond>
-void RankNode<T,Cond>::AddExtra(int end, int toAdd)
+void RankNode<T,Cond>::AddExtra(const Cond& end, int toAdd)
 {
     if(this == nullptr)
         throw KeyNotFound();
@@ -579,7 +579,7 @@ void RankNode<T,Cond>::AddExtra(int end, int toAdd)
 }
 
 template<class T, class Cond>
-void RankNode<T,Cond>::AddExtraAux(int end, int toAdd, int prevDirection, int sum)
+void RankNode<T,Cond>::AddExtraAux(const Cond& end, int toAdd, int prevDirection, int sum)
 {
     if(this == nullptr)
         throw KeyNotFound();
