@@ -1,6 +1,6 @@
 #include "olympics24a2.h"
 
-olympics_t::olympics_t(): teamsHash(),highest_ranked_team_rank(-1), number_of_teams(0) ,teamsTree() {}
+olympics_t::olympics_t(): teamsHash(), number_of_teams(0) ,teamsTree() {}
 
 olympics_t::~olympics_t()
 {
@@ -18,10 +18,6 @@ StatusType olympics_t::add_team(int teamId)
         Team* toAdd = new Team(teamId);
         teamsHash.insert(teamId,toAdd);
 
-        // only updates if it is the first team
-        if (number_of_teams == 0) {
-            highest_ranked_team_rank = 0;
-        }
 
     }  catch (std::bad_alloc &error) {
          return StatusType::ALLOCATION_ERROR;
@@ -48,17 +44,6 @@ StatusType olympics_t::remove_team(int teamId)
         teamsHash.remove(teamId);
         number_of_teams--;
 
-            if(teamsTree.getSize() == 0 ) { // there are teams but they are empty
-                highest_ranked_team_rank = 0;
-            }
-            else
-                if (number_of_teams != 0) {
-                    StrCond strCond = StrCond(teamsTree.getBiggest()->getNodeData()->get_power(),teamsTree.getBiggest()->getNodeData()->get_team_id());
-                    highest_ranked_team_rank = teamsTree.getBiggest()->getNodeData()->get_power() + teamsTree.findSum(strCond) ;
-                }
-                else {  // no teams at all
-                    highest_ranked_team_rank = 0;
-                }
 
 
     }  catch (std::bad_alloc &error) {
@@ -75,7 +60,6 @@ StatusType olympics_t::add_player(int teamId, int playerStrength)
     if (teamId <= 0 || playerStrength <= 0 )
         return StatusType::INVALID_INPUT;
     try {
-        // need to test if team exists?
 
         Team* ptrTeam= *(teamsHash.find(teamId));
         Contestant* con = new Contestant(ptrTeam->get_entry(),playerStrength); // not sure about this maybe need to change the way we add contestant (ze tip tipa akum)
@@ -90,8 +74,6 @@ StatusType olympics_t::add_player(int teamId, int playerStrength)
             this->teamsTree.remove(strCond1);
         }
         this->teamsTree.insert(strCond2,ptrTeam);
-
-        //highest_ranked_team_compare(ptrTeam);
 
     }  catch (std::bad_alloc &error) {
             return StatusType::ALLOCATION_ERROR;
@@ -157,22 +139,22 @@ output_t<int> olympics_t::play_match(int teamId1, int teamId2)
 
         if(power_team1 > power_team2){
             teamsTree.addExtraSingle(strCond1,1);
+            teamId=teamId1;
         }   else {
             if (power_team1 < power_team2) {
                 teamsTree.addExtraSingle(strCond2,1);
+                teamId=teamId2;
             } else {
                 if(ptrTeam1->get_team_id() > ptrTeam2->get_team_id()) {
                     teamsTree.addExtraSingle(strCond2,1);
+                    teamId=teamId2;
                 } else {
                     teamsTree.addExtraSingle(strCond1,1);
+                    teamId=teamId1;
                 }
             }
         }
-//
-//        if(ptrTeam1->get_number_of_players() > 0 )
-//            highest_ranked_team_compare(ptrTeam1);
-//        if(ptrTeam2->get_number_of_players() > 0 )
-//            highest_ranked_team_compare(ptrTeam2);
+
 
     }  catch (std::bad_alloc &error) {
             return StatusType::ALLOCATION_ERROR;

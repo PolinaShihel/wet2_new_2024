@@ -112,17 +112,17 @@ int main() {
     print(ol.play_match(1,8)); cout << " == FAILURE" <<endl; // team2 doesnt exist
     print(ol.play_match(7,2)); cout << " == FAILURE" <<endl; // team1 doesnt exist
     print(ol.play_match(7,8)); cout << " == FAILURE" <<endl; // team2 and 1 doesnt exist
-    print(ol.play_match(1,2)); cout << " == SUCCESS" <<endl;  //team1 wins : 0      , team2 wins : 1
+    print(ol.play_match(1,2)); cout << " == SUCCESS , 2" <<endl;  //team1 wins : 0      , team2 wins : 1
     print(ol.num_wins_for_team(1)); cout << " == SUCCESS , 0"<<endl;
     print(ol.num_wins_for_team(2)); cout << " == SUCCESS , 1"<<endl;
-    print(ol.play_match(1,2)); cout << " == SUCCESS" <<endl;  //team1 wins : 0      , team2 wins : 2
+    print(ol.play_match(1,2)); cout << " == SUCCESS , 2" <<endl;  //team1 wins : 0      , team2 wins : 2
     print(ol.num_wins_for_team(1)); cout << " == SUCCESS , 0"<<endl;
     print(ol.num_wins_for_team(2)); cout << " == SUCCESS , 2"<<endl;
     print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 42 "<<endl;
-    print(ol.play_match(3,1)); cout << " == SUCCESS" <<endl;  //team1 wins : 0      , team3 wins : 1
+    print(ol.play_match(3,1)); cout << " == SUCCESS , 3" <<endl;  //team1 wins : 0      , team3 wins : 1
     print(ol.num_wins_for_team(3)); cout << " == SUCCESS , 1"<<endl;
     print(ol.num_wins_for_team(1)); cout << " == SUCCESS , 0"<<endl;
-    print(ol.play_match(2,3)); cout << " == SUCCESS" <<endl; //team2 wins : 3      , team3 wins : 1
+    print(ol.play_match(2,3)); cout << " == SUCCESS , 2" <<endl; //team2 wins : 3      , team3 wins : 1
     print(ol.num_wins_for_team(3)); cout << " == SUCCESS , 1"<<endl;
     print(ol.num_wins_for_team(2)); cout << " == SUCCESS , 3"<<endl;
     print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 43 "<<endl;
@@ -137,15 +137,52 @@ int main() {
     print(ol.unite_teams(1,8)); cout << " == FAILURE" <<endl; // team2 doesnt exist
     print(ol.unite_teams(7,2)); cout << " == FAILURE" <<endl; // team1 doesnt exist
     print(ol.unite_teams(7,8)); cout << " == FAILURE" <<endl; // team2 and 1 doesnt exist
-    print(ol.unite_teams(1,3)); cout << " == SUCCESS" <<endl;  // unite team3 into team1   TODO fails here
+    print(ol.unite_teams(1,3)); cout << " == SUCCESS" <<endl;  // unite team3 into team1
     //team1 players: 10,6,8,9,20,22     power:9*6=54
     //team2 players: 11,5,16,10    power 10*4 = 40 + 3
     print(ol.unite_teams(1,3)); cout << " == FAILURE" <<endl;  // team3 doesnt exist anymore
     print(ol.num_wins_for_team(1)); cout << " == SUCCESS , 0 "<<endl;
     print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 54 "<<endl;
+    print(ol.num_wins_for_team(3)); cout << " == FAILURE"<<endl; // team doesnt exist
+
+    print(ol.add_team(3)); cout << " == SUCCESS" <<endl;
+    print(ol.add_player(3,2));cout << " == SUCCESS" <<endl;
+    print(ol.add_player(3,23));cout << " == SUCCESS" <<endl;
+    print(ol.add_player(3,15));cout << " == SUCCESS" <<endl;
+    print(ol.add_player(3,18));cout << " == SUCCESS" <<endl;
+    print(ol.num_wins_for_team(3)); cout << " == SUCCESS ,0"<<endl; // team doesnt exist
+
+    //team1 players: 10,6,8,9,20,22     power:9*6=54
+    //team2 players: 11,5,16,10    power 10*4 = 40 + 3
+    //team3 players: 2,23,12,18    power: 15*4 = 60
+    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 60 "<<endl;
+    print(ol.play_match(1,2)); cout << " == SUCCESS , 1 "<<endl;
+    print(ol.play_match(1,2));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.play_match(1,2));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.play_match(1,2));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.play_match(1,2));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.play_match(1,2));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.play_match(1,2));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 61 "<<endl;
+    print(ol.add_team(4)); cout << " == SUCCESS" <<endl;
+    print(ol.add_player(4,77));cout << " == SUCCESS" <<endl;
+    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 77 "<<endl;
+    print(ol.remove_team(4));cout << " == SUCCESS" <<endl;
+    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 61 "<<endl;
+    print(ol.remove_newest_player(1)); cout << "SUCCESS" << endl;
+    //team1 players: 10,6,8,9,20     power:9*5= 45 + 7 = 52
+    //team2 players: 11,5,16,10    power 10*4 = 40 + 3  = 43
+    //team3 players: 2,23,12,18    power: 15*4 = 60
+    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 60 "<<endl;
+
+    cout<< endl << "checking play tournament " << endl;
+
+    //team1 players: 10,6,8,9,20    power:9*6=54 + 7 = 61
+    //team2 players: 11,5,16,10    power 10*4 = 40 + 3  = 43
+    //team3 players: 2,23,12,18    power: 15*4 = 60
 
 
-    cout<< endl << "some more tests: " << endl;
+   // print(ol.play_tournament());
 
 
     return 0;
