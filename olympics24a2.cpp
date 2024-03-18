@@ -2,9 +2,23 @@
 
 olympics_t::olympics_t(): teamsHash(), number_of_teams(0) ,teamsTree() {}
 
+void deleteTrav(Node<Team*, int>* node){
+    if (node == nullptr)
+        return;
+    deleteTrav(node->getLeft());
+    Team* data = *(node->getNodeDataPointer());
+    data->destroy_players_trees_with_con();
+    delete data;
+    deleteTrav(node->getRight());
+}
+
 olympics_t::~olympics_t()
 {
-	// TODO: Your code goes here
+    for (int i = 0; i < teamsHash.getSize(); ++i) {
+        if(teamsHash.members[i].getSize() == 0)
+            continue;
+        deleteTrav(teamsHash.members[i].getRoot());
+    }
 }
 
 
@@ -12,16 +26,17 @@ StatusType olympics_t::add_team(int teamId)
 {
     if (teamId <= 0)
         return StatusType::INVALID_INPUT;
+    Team* toAdd;
     try {
-
-
-        Team* toAdd = new Team(teamId);
+        toAdd = new Team(teamId);
         teamsHash.insert(teamId,toAdd);
 
 
     }  catch (std::bad_alloc &error) {
          return StatusType::ALLOCATION_ERROR;
     }  catch (KeyExists &error) {
+        toAdd->destroy_players_trees();
+        delete toAdd;
         return StatusType::FAILURE;
     }
     number_of_teams++;
@@ -38,10 +53,12 @@ StatusType olympics_t::remove_team(int teamId)
 
         if(toDelete->get_number_of_players() != 0) {
             int str = toDelete->get_power();
-            StrCond strCond = StrCond(str, teamId);
+            StrTeamCond strCond = StrTeamCond(str, teamId);
             teamsTree.remove(strCond);
         }
         teamsHash.remove(teamId);
+        toDelete->destroy_players_trees_with_con();
+        delete toDelete;
         number_of_teams--;
 
 
@@ -64,11 +81,11 @@ StatusType olympics_t::add_player(int teamId, int playerStrength)
         Team* ptrTeam= *(teamsHash.find(teamId));
         Contestant* con = new Contestant(ptrTeam->get_entry(),playerStrength); // not sure about this maybe need to change the way we add contestant (ze tip tipa akum)
         int wins = this->num_wins_for_team(teamId).ans();
-        StrCond strCond1 = StrCond(ptrTeam->get_power(),teamId); // before adding
+        StrTeamCond strCond1 = StrTeamCond(ptrTeam->get_power(),teamId); // before adding
 
         ptrTeam->add_contestant_to_team(con);
 
-        StrCond strCond2 = StrCond(ptrTeam->get_power(),teamId); //after adding
+        StrTeamCond strCond2 = StrTeamCond(ptrTeam->get_power(),teamId); //after adding
 
 
         this->teamsTree.insert(strCond2,ptrTeam);
@@ -105,13 +122,13 @@ StatusType olympics_t::remove_newest_player(int teamId)
         if(ptrTeam->get_number_of_players() == 0)
             return StatusType::FAILURE;
 
-        StrCond strCond1 = StrCond(ptrTeam->get_power(),teamId); // str cond before change
+        StrTeamCond strCond1 = StrTeamCond(ptrTeam->get_power(),teamId); // str cond before change
         int wins = this->num_wins_for_team(teamId).ans();
 
         ptrTeam->remove_newest_player();
         ptrTeam->calc_team_power();
 
-        StrCond strCond2 = StrCond(ptrTeam->get_power(),teamId); // str cond after change
+        StrTeamCond strCond2 = StrTeamCond(ptrTeam->get_power(),teamId); // str cond after change
 
         this->teamsTree.remove(strCond1);
 
@@ -144,9 +161,9 @@ output_t<int> olympics_t::play_match(int teamId1, int teamId2)
         Team* ptrTeam2= *(teamsHash.find(teamId2));
         int power_team1 = ptrTeam1->get_power();
         int power_team2 = ptrTeam2->get_power();
-        StrCond strCond1 =StrCond(power_team1,teamId1);
+        StrTeamCond strCond1 =StrTeamCond(power_team1,teamId1);
 
-        StrCond strCond2 =StrCond(power_team2,teamId2);
+        StrTeamCond strCond2 =StrTeamCond(power_team2,teamId2);
 
         if(ptrTeam1->get_number_of_players() == 0 || ptrTeam2->get_number_of_players() == 0)
             return StatusType::FAILURE;
@@ -188,11 +205,16 @@ output_t<int> olympics_t::num_wins_for_team(int teamId)
     try {
 
         Team* ptrTeam= *(teamsHash.find(teamId));
-        StrCond strCond = StrCond(ptrTeam->get_power(),teamId);
-
+        StrTeamCond strCond = StrTeamCond(ptrTeam->get_power(),teamId);
         if(ptrTeam->get_wins() > 0) {
+            int winsTeam = 0;
             wins = ptrTeam->get_wins();
+            if(ptrTeam->get_number_of_players() > 0)
+                winsTeam = teamsTree.findSum(strCond);
+            return wins > winsTeam ? wins : winsTeam;
         }else {
+            if(ptrTeam->get_number_of_players()==0)
+                return 0;
             wins = teamsTree.findSum(strCond);
         }
 
@@ -227,10 +249,13 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         Team* team2 = *(teamsHash.find(teamId2));
         int team1Size = team1->get_number_of_players();
         int team2Size = team2->get_number_of_players();
-        StrCond team1cond = StrCond(team1->get_power(),teamId1);
-        StrCond team2cond = StrCond(team2->get_power(),teamId2);
+        StrTeamCond team1cond = StrTeamCond(team1->get_power(),teamId1);
+        StrTeamCond team2cond = StrTeamCond(team2->get_power(),teamId2);
         if(team2Size == 0){
             this->teamsHash.remove(teamId2);
+            this->number_of_teams--;
+            team2->destroy_players_trees();
+            delete team2;
             return StatusType::SUCCESS;
         }
         if(team1Size == 0){
@@ -239,20 +264,22 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
             team1->set_power(team2->get_power());
             team1->set_number_of_players(team2->get_number_of_players());
             team1->set_entry(team2->get_entry());
-            team1cond = StrCond(team1->get_power(),teamId1);
+            team1cond = StrTeamCond(team1->get_power(),teamId1);
             this->teamsHash.remove(teamId2);
             this->teamsTree.remove(team2cond);
             this->teamsTree.insert(team1cond, team1);
+            this->number_of_teams--;
+            delete team2;
             return StatusType::SUCCESS;
         }
         int wins = this->num_wins_for_team(teamId1).ans();
         Node<ContestantEntry*, int> *team1Entry[team1Size];
-        RankNode<ContestantStr*, StrCond> *team1Str[team1Size];
+        RankNode<ContestantStr*, StrPlayerCond> *team1Str[team1Size];
         Node<ContestantEntry*, int> *team2Entry[team2Size];
-        RankNode<ContestantStr*, StrCond> *team2Str[team2Size];
+        RankNode<ContestantStr*, StrPlayerCond> *team2Str[team2Size];
         int totalSize = team1Size + team2Size;
         Node<ContestantEntry*, int> *teamTotalEntry[totalSize];
-        RankNode<ContestantStr*, StrCond> *teamTotalStr[totalSize];
+        RankNode<ContestantStr*, StrPlayerCond> *teamTotalStr[totalSize];
         team1->fillArray(team1Entry,team1Str,team1Size);
         team2->fillArray(team2Entry,team2Str,team2Size);
         int latestArrival = team1->get_entry();
@@ -261,7 +288,7 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
             int entry = team2Entry[i]->getNodeData()->getConPtr()->get_entry();
             team2Entry[i]->getNodeData()->getConPtr()->set_entry(entry + latestArrival);
             team2Entry[i]->setKey(entry + latestArrival);
-            StrCond newCond = StrCond(team2Str[i]->getNodeData()->getConPtr()->get_strength(),
+            StrPlayerCond newCond = StrPlayerCond(team2Str[i]->getNodeData()->getConPtr()->get_strength(),
                                       team2Str[i]->getNodeData()->getConPtr()->get_entry());
             team2Str[i]->setKey(newCond);
         }
@@ -287,10 +314,11 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         }
         team1->setTrees(teamTotalEntry,teamTotalStr,totalSize, latestTotal + 1);
         team2->destroy_players_trees();
+        delete team2;
         this->teamsTree.remove(team1cond);
         this->teamsTree.remove(team2cond);
         this->teamsHash.remove(teamId2);
-        StrCond teamCond = StrCond(team1->get_power(),teamId1);
+        StrTeamCond teamCond = StrTeamCond(team1->get_power(),teamId1);
         this->teamsTree.insert(teamCond,team1);
         this->teamsTree.addExtraSingle(teamCond,wins);
     }
@@ -299,7 +327,7 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
     }catch(KeyNotFound &error){
         return StatusType::FAILURE;
     }
-
+    this->number_of_teams--;
     return StatusType::SUCCESS;
 }
 
@@ -323,15 +351,16 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
         return StatusType::INVALID_INPUT;
     int winner_id=0;
     try {
-        StrCond condLow = StrCond(lowPower,-1);
-        StrCond condHigh = StrCond(highPower,-1);
-        Team *rankLow = teamsTree.findClosestBig(condLow)->getNodeData();
-        Team *rankHigh = teamsTree.findClosestSmall(condHigh)->getNodeData();
-
+        StrTeamCond condLow = StrTeamCond(lowPower,INT_MAX);
+        StrTeamCond condHigh = StrTeamCond(highPower,INT_MAX);
+        Team *rankLow = teamsTree.findClosestSmall(condLow)->getNodeData();
+        Team *rankHigh = teamsTree.findClosestBig(condHigh)->getNodeData();
+        if(rankLow == nullptr || rankHigh == nullptr)
+            return StatusType::FAILURE;
         winner_id = rankHigh->get_team_id();
 
-        condLow = StrCond(rankLow->get_power(),rankLow->get_team_id());
-        condHigh = StrCond(rankHigh->get_power(),rankHigh->get_team_id());
+        condLow = StrTeamCond(rankLow->get_power(),rankLow->get_team_id());
+        condHigh = StrTeamCond(rankHigh->get_power(),rankHigh->get_team_id());
 
         int lowRank = teamsTree.Rank(condLow);
         int highRank = teamsTree.Rank(condHigh);
@@ -349,13 +378,13 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
             //  so we add 3 to all of them , then sub 1 from all except 8, then sub 1 from all except 7 and 8
             // then sub 1 from all except 5 6 7 8
             Team* temp = *(teamsTree.select(highRank-1*i));
-            StrCond tempCond = StrCond(temp->get_power(),temp->get_team_id());
+            StrTeamCond tempCond = StrTeamCond(temp->get_power(),temp->get_team_id());
             teamsTree.addExtra(tempCond, -1);
             wins--;
             i*=2;
         }
         Team* temp = *(teamsTree.select(highRank-1*i));
-        StrCond tempCond = StrCond(temp->get_power(),temp->get_team_id());
+        StrTeamCond tempCond = StrTeamCond(temp->get_power(),temp->get_team_id());
         teamsTree.addExtra(tempCond, -1);
 
 

@@ -20,12 +20,13 @@
 #include "AVL_tree.h"
 #include "RankTree.h"
 #include "Team.h"
+#include "StrTeamCond.h"
 
 class olympics_t {
 private:
     hashTable<Team*, int> teamsHash;
     int number_of_teams;
-    RankTree<Team*,StrCond> teamsTree;
+    RankTree<Team*,StrTeamCond> teamsTree;
 
 public:
 	// <DO-NOT-MODIFY> {

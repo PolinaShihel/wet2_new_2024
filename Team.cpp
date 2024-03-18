@@ -4,7 +4,7 @@
 Team::Team(int teamId) : teamId(teamId) , power(0) ,
                         number_of_players(0) , entry(0) , wins(0),
                         contestantTreeEntry( new AVLTree<ContestantEntry* , int>()) ,
-                        contestantTreeStr( new RankTree<ContestantStr* , StrCond>()){}
+                        contestantTreeStr( new RankTree<ContestantStr* , StrPlayerCond>()){}
 
 int Team::get_power() { return power; }
 int Team::get_team_id() { return teamId; }
@@ -37,11 +37,11 @@ AVLTree<ContestantEntry*, int> *Team::getEntryTree(){
     return this->contestantTreeEntry;
 }
 
-RankTree<ContestantStr*, StrCond>* Team::getStrTree(){
+RankTree<ContestantStr*, StrPlayerCond>* Team::getStrTree(){
     return this->contestantTreeStr;
 }
 
-void Team::setStrTree(RankTree<ContestantStr*, StrCond>* strTree){
+void Team::setStrTree(RankTree<ContestantStr*, StrPlayerCond>* strTree){
     delete this->contestantTreeStr;
     this->contestantTreeStr = strTree;
 }
@@ -84,7 +84,7 @@ void Team::add_contestant_to_team(Contestant * contestant) {
 
         this->set_number_of_players(1);
 
-        StrCond strCond = StrCond(str,ent);
+        StrPlayerCond strCond = StrPlayerCond(str,ent);
         contestantTreeStr->insert(strCond,toAddStr);
 
         this->calc_team_power();
@@ -106,7 +106,7 @@ void Team::remove_newest_player() {
     ContestantEntry* toDeleteEntry = toDeleteNode->getNodeData();
     int ent = toDeleteEntry->getConPtr()->get_entry();
     int str = toDeleteEntry->getConPtr()->get_strength();
-    StrCond strCond = StrCond(str,ent);
+    StrPlayerCond strCond = StrPlayerCond(str,ent);
     this->contestantTreeEntry->remove(ent);
     this->contestantTreeStr->remove(strCond);
     delete toDeleteEntry->getConPtr();
@@ -117,17 +117,17 @@ void Team::remove_newest_player() {
 
 }
 
-void Team::fillArray(Node<ContestantEntry*, int> *teamEntry[], RankNode<ContestantStr*, StrCond> *teamStr[], int size)
+void Team::fillArray(Node<ContestantEntry*, int> *teamEntry[], RankNode<ContestantStr*, StrPlayerCond> *teamStr[], int size)
 {
     this->contestantTreeEntry->fillArray(teamEntry,0);
     this->contestantTreeStr->fillArray(teamStr,0);
 }
 
-void Team::setTrees(Node<ContestantEntry*, int> *teamTotalEntry[],RankNode<ContestantStr*, StrCond> *teamTotalStr[],
+void Team::setTrees(Node<ContestantEntry*, int> *teamTotalEntry[],RankNode<ContestantStr*, StrPlayerCond> *teamTotalStr[],
                     int size, int latestEntry)
 {
     AVLTree<ContestantEntry*, int> *Entry = new AVLTree<ContestantEntry*, int>(teamTotalEntry, size, 0, size - 1);
-    RankTree<ContestantStr*, StrCond>* Str = new RankTree<ContestantStr*, StrCond>(teamTotalStr, size, 0, size -1);
+    RankTree<ContestantStr*, StrPlayerCond>* Str = new RankTree<ContestantStr*, StrPlayerCond>(teamTotalStr, size, 0, size -1);
     destroy_players_trees();
     this->contestantTreeEntry = Entry;
     this->contestantTreeStr = Str;
