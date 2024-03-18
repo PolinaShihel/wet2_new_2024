@@ -37,6 +37,8 @@ public:
     void setEntryTree(AVLTree<ContestantEntry*, int> *treeEntry);
 
     void destroy_players_trees(); //TODO
+    void destroy_players_trees_with_con(); //TODO
+    void destroyTra(Node<ContestantEntry*, int>* node);
     void add_contestant_to_team(Contestant * contestant);
     void remove_newest_player();
     void fillArray(Node<ContestantEntry*, int> *teamEntry[], RankNode<ContestantStr*, StrCond> *teamStr[], int size);
