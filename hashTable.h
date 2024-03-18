@@ -14,18 +14,17 @@ double const BETA = (sqrt(5) - 1) / 2;
 template<class T, class Cond>
 class hashTable {
 private:
-    AVLTree<T, Cond>* members;
     int size;
     int elementsCount;
-
     int getHashCode(Cond key);
     double getLoadFactor() const;
     void relocateMembersImpl(Node<T, Cond> *currentNode, AVLTree<T, Cond> *arr);
     void rehash();
-
 public:
+    AVLTree<T, Cond>* members;
     hashTable() : members(new AVLTree<T, Cond>[INITIAL_SIZE]()), size(INITIAL_SIZE), elementsCount(0) {}
     ~hashTable();
+    int getSize();
     T* find(Cond key);
     void insert( Cond key, T& element);
     void remove( Cond key);
@@ -34,8 +33,14 @@ public:
 };
 
 template<class T, class Cond>
+int hashTable<T, Cond>::getSize() {
+    return this->size;
+}
+
+template<class T, class Cond>
 hashTable<T,Cond>::~hashTable()
 {
+
     delete[] members;
 }
 

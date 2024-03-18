@@ -2,9 +2,23 @@
 
 olympics_t::olympics_t(): teamsHash(), number_of_teams(0) ,teamsTree() {}
 
+void deleteTrav(Node<Team*, int>* node){
+    if (node == nullptr)
+        return;
+    deleteTrav(node->getLeft());
+    Team* data = *(node->getNodeDataPointer());
+    data->destroy_players_trees_with_con();
+    delete data;
+    deleteTrav(node->getRight());
+}
+
 olympics_t::~olympics_t()
 {
-	// TODO: Your code goes here
+    for (int i = 0; i < teamsHash.getSize(); ++i) {
+        if(teamsHash.members[i].getSize() == 0)
+            continue;
+        deleteTrav(teamsHash.members[i].getRoot());
+    }
 }
 
 
@@ -12,16 +26,15 @@ StatusType olympics_t::add_team(int teamId)
 {
     if (teamId <= 0)
         return StatusType::INVALID_INPUT;
+    Team* toAdd;
     try {
-
-
-        Team* toAdd = new Team(teamId);
+        toAdd = new Team(teamId);
         teamsHash.insert(teamId,toAdd);
-
-
     }  catch (std::bad_alloc &error) {
          return StatusType::ALLOCATION_ERROR;
     }  catch (KeyExists &error) {
+        toAdd->destroy_players_trees();
+        delete toAdd;
         return StatusType::FAILURE;
     }
     number_of_teams++;
@@ -35,16 +48,15 @@ StatusType olympics_t::remove_team(int teamId)
     try {
 
         Team* toDelete= *(teamsHash.find(teamId));
-
         if(toDelete->get_number_of_players() != 0) {
             int str = toDelete->get_power();
             StrCond strCond = StrCond(str, teamId);
             teamsTree.remove(strCond);
         }
         teamsHash.remove(teamId);
+        toDelete->destroy_players_trees_with_con();
+        delete toDelete;
         number_of_teams--;
-
-
 
     }  catch (std::bad_alloc &error) {
             return StatusType::ALLOCATION_ERROR;
@@ -63,17 +75,16 @@ StatusType olympics_t::add_player(int teamId, int playerStrength)
 
         Team* ptrTeam= *(teamsHash.find(teamId));
         Contestant* con = new Contestant(ptrTeam->get_entry(),playerStrength); // not sure about this maybe need to change the way we add contestant (ze tip tipa akum)
-
         StrCond strCond1 = StrCond(ptrTeam->get_power(),teamId); // before adding
-
         ptrTeam->add_contestant_to_team(con);
-
         StrCond strCond2 = StrCond(ptrTeam->get_power(),teamId); //after adding
-
+        int wins =0;
         if (ptrTeam->get_number_of_players() > 1) {
+            wins = this->teamsTree.findSum(strCond1);
             this->teamsTree.remove(strCond1);
         }
         this->teamsTree.insert(strCond2,ptrTeam);
+        this->teamsTree.addExtraSingle(strCond2, wins);
 
     }  catch (std::bad_alloc &error) {
             return StatusType::ALLOCATION_ERROR;
@@ -134,10 +145,7 @@ output_t<int> olympics_t::play_match(int teamId1, int teamId2)
         int power_team1 = ptrTeam1->get_power();
         int power_team2 = ptrTeam2->get_power();
         StrCond strCond1 =StrCond(power_team1,ptrTeam1->get_team_id());
-
         StrCond strCond2 =StrCond(power_team2,ptrTeam2->get_team_id());
-
-
         if(power_team1 > power_team2){
             teamsTree.addExtraSingle(strCond1,1);
             teamId=teamId1;
@@ -213,6 +221,8 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         StrCond team2cond = StrCond(team2->get_power(),teamId2);
         if(team2Size == 0){
             this->teamsHash.remove(teamId2);
+            team2->destroy_players_trees();
+            delete team2;
             return StatusType::SUCCESS;
         }
         if(team1Size == 0){
@@ -225,6 +235,7 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
             this->teamsHash.remove(teamId2);
             this->teamsTree.remove(team2cond);
             this->teamsTree.insert(team1cond, team1);
+            delete team2;
             return StatusType::SUCCESS;
         }
         int wins = this->num_wins_for_team(teamId1).ans();
@@ -269,6 +280,7 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         }
         team1->setTrees(teamTotalEntry,teamTotalStr,totalSize, latestTotal + 1);
         team2->destroy_players_trees();
+        delete team2;
         this->teamsTree.remove(team1cond);
         this->teamsTree.remove(team2cond);
         this->teamsHash.remove(teamId2);

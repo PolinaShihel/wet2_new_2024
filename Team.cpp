@@ -24,7 +24,7 @@ void Team::calc_team_power() {
         ContestantStr* toSet = *(contestantTreeStr->select(1));
         this->set_power(toSet->getConPtr()->get_strength());
     } else {
-        ContestantStr*  median_con = *(contestantTreeStr->select(number_of_players/2));
+        ContestantStr*  median_con = *(contestantTreeStr->select((number_of_players/2) + 1));
         int power = this->get_number_of_players() * (median_con->getConPtr()->get_strength());
         this->set_power(power);
     }
@@ -39,14 +39,32 @@ RankTree<ContestantStr*, StrCond>* Team::getStrTree(){
 }
 
 void Team::setStrTree(RankTree<ContestantStr*, StrCond>* strTree){
+    delete this->contestantTreeStr;
     this->contestantTreeStr = strTree;
 }
 
 void Team::setEntryTree(AVLTree<ContestantEntry*, int> *treeEntry){
+    delete this->contestantTreeEntry;
     this->contestantTreeEntry = treeEntry;
 }
 
 void Team::destroy_players_trees() {
+    delete this->contestantTreeEntry;
+    delete this->contestantTreeStr;
+}
+
+void Team::destroyTra(Node<ContestantEntry*, int>* node){
+    if (node == nullptr)
+        return;
+    destroyTra(node->getLeft());
+    ContestantEntry* data = *(node->getNodeDataPointer());
+    delete data->getConPtr();
+    delete data->getConStrPtr();
+    delete data;
+    destroyTra(node->getRight());
+}
+void Team::destroy_players_trees_with_con() {
+    destroyTra(this->contestantTreeEntry->getRoot());
     delete this->contestantTreeEntry;
     delete this->contestantTreeStr;
 }
@@ -88,6 +106,9 @@ void Team::remove_newest_player() {
     StrCond strCond = StrCond(str,ent);
     this->contestantTreeEntry->remove(ent);
     this->contestantTreeStr->remove(strCond);
+    delete toDeleteEntry->getConPtr();
+    delete toDeleteEntry->getConStrPtr();
+    delete toDeleteEntry;
     this->set_number_of_players(-1);
     this->calc_team_power();
 }
