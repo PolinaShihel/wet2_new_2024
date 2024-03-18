@@ -76,7 +76,12 @@ StatusType olympics_t::add_player(int teamId, int playerStrength)
         if (ptrTeam->get_number_of_players() > 1) {
             this->teamsTree.remove(strCond1);
             this->teamsTree.addExtraSingle(strCond2, wins);
+        } else {
+            if (ptrTeam->get_wins() != 0)
+                this->teamsTree.addExtraSingle(strCond2, ptrTeam->get_wins());
         }
+
+        ptrTeam->set_wins(0);
 
 
     }  catch (std::bad_alloc &error) {
@@ -114,6 +119,8 @@ StatusType olympics_t::remove_newest_player(int teamId)
             this->teamsTree.insert(strCond2, ptrTeam);
             this->teamsTree.addExtraSingle(strCond2, wins);
         }
+
+        ptrTeam->set_wins(wins);
 
     } catch (std::bad_alloc &error) {
         return StatusType::ALLOCATION_ERROR;
@@ -182,7 +189,12 @@ output_t<int> olympics_t::num_wins_for_team(int teamId)
 
         Team* ptrTeam= *(teamsHash.find(teamId));
         StrCond strCond = StrCond(ptrTeam->get_power(),teamId);
-        wins= teamsTree.findSum(strCond);
+
+        if(ptrTeam->get_wins() > 0) {
+            wins = ptrTeam->get_wins();
+        }else {
+            wins = teamsTree.findSum(strCond);
+        }
 
     } catch (std::bad_alloc &error) {
         return StatusType::ALLOCATION_ERROR;

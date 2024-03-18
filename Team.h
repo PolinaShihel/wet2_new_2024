@@ -14,6 +14,7 @@ class Team
     int power;
     int number_of_players;
     int entry;
+    int wins;
     AVLTree<ContestantEntry*, int> *contestantTreeEntry;
     RankTree<ContestantStr*, StrCond>* contestantTreeStr;
 
@@ -29,6 +30,8 @@ public:
     void set_entry(int newEntry);
     void set_number_of_players(int toAdd);
     void set_power(int toSet);
+    int get_wins();
+    void set_wins(int toSet);
 
     void calc_team_power();
     AVLTree<ContestantEntry*, int> *getEntryTree();
