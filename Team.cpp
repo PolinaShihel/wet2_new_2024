@@ -110,7 +110,9 @@ void Team::remove_newest_player() {
     delete toDeleteEntry->getConStrPtr();
     delete toDeleteEntry;
     this->set_number_of_players(-1);
+    this->set_entry(ent-1);
     this->calc_team_power();
+
 }
 
 void Team::fillArray(Node<ContestantEntry*, int> *teamEntry[], RankNode<ContestantStr*, StrCond> *teamStr[], int size)

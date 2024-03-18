@@ -57,7 +57,7 @@ StatusType olympics_t::remove_team(int teamId)
 
 StatusType olympics_t::add_player(int teamId, int playerStrength)
 {
-    if (teamId <= 0 || playerStrength <= 0 )
+    if (teamId <= 0 || playerStrength < 0 )
         return StatusType::INVALID_INPUT;
     try {
 
