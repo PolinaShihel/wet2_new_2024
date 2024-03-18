@@ -141,6 +141,8 @@ output_t<int> olympics_t::play_match(int teamId1, int teamId2)
 
         StrCond strCond2 =StrCond(power_team2,teamId2);
 
+        if(ptrTeam1->get_number_of_players() == 0 || ptrTeam2->get_number_of_players() == 0)
+            return StatusType::FAILURE;
 
         if(power_team1 > power_team2){
             teamsTree.addExtraSingle(strCond1,1);
