@@ -116,13 +116,21 @@ template<class T,class Cond>
 //}
 
 RankNode<T, Cond>* RankNode<T,Cond>::findClosestSmall(Cond& toFind, RankNode<T, Cond>* current) {
-    if(this == nullptr) return current;
+    if(this == nullptr)
+        return current;
 
-    if(this->key < toFind)
-        return this->right ? this->right->findClosestSmall(toFind, this) : this;
-    else
+    if(this->key < toFind) {
+        RankNode<T, Cond>* rightResult = this->right ? this->right->findClosestSmall(toFind, this) : this;
+        RankNode<T, Cond>* leftResult = this->left ? this->left->findClosestSmall(toFind, current) : current;
+        if (rightResult && leftResult) {
+            return (toFind - rightResult->key < toFind - leftResult->key) ? rightResult : leftResult;
+        }
+        return rightResult ? rightResult : leftResult;
+    } else {
         return this->left ? this->left->findClosestSmall(toFind, current) : current;
+    }
 }
+
 
 
 
@@ -142,11 +150,21 @@ template<class T,class Cond>
 RankNode<T, Cond>* RankNode<T,Cond>::findClosestBig(Cond& toFind, RankNode<T, Cond>* current) {
     if(this == nullptr) return current;
 
-    if(this->key < toFind)
+    if(this->key > toFind) {
+
+        RankNode<T, Cond>* leftResult = this->left ? this->left->findClosestBig(toFind, this) : this;
+        RankNode<T, Cond>* rightResult = this->right ? this->right->findClosestBig(toFind, current) : current;
+
+        if (leftResult && rightResult) {
+            return (leftResult->key - toFind < rightResult->key - toFind) ? leftResult : rightResult;
+        }
+        return leftResult ? leftResult : rightResult;
+    } else {
         return this->right ? this->right->findClosestBig(toFind, current) : current;
-    else
-        return this->left ? this->left->findClosestBig(toFind, this) : this;
+    }
 }
+
+
 
 template<class T,class Cond>
 void RankNode<T,Cond>::addExtraSingle(Cond &end, int toAdd, int sum) {

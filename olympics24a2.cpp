@@ -137,9 +137,9 @@ output_t<int> olympics_t::play_match(int teamId1, int teamId2)
         Team* ptrTeam2= *(teamsHash.find(teamId2));
         int power_team1 = ptrTeam1->get_power();
         int power_team2 = ptrTeam2->get_power();
-        StrCond strCond1 =StrCond(power_team1,ptrTeam1->get_team_id());
+        StrCond strCond1 =StrCond(power_team1,teamId1);
 
-        StrCond strCond2 =StrCond(power_team2,ptrTeam2->get_team_id());
+        StrCond strCond2 =StrCond(power_team2,teamId2);
 
 
         if(power_team1 > power_team2){
@@ -327,7 +327,6 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
         if(wins  < 0) {
             return StatusType::FAILURE;
         }
-
 
         teamsTree.addExtra(condHigh, wins);
         int i=1;
