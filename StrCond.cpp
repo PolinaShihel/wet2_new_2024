@@ -6,7 +6,7 @@ bool StrCond::operator>(const StrCond& other) const
         return true;
     }
     if (this->Strength == other.Strength) {
-        if (this->additional > other.additional) {
+        if (this->additional < other.additional) {
             return true;
         }
     }
