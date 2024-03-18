@@ -63,17 +63,21 @@ StatusType olympics_t::add_player(int teamId, int playerStrength)
 
         Team* ptrTeam= *(teamsHash.find(teamId));
         Contestant* con = new Contestant(ptrTeam->get_entry(),playerStrength); // not sure about this maybe need to change the way we add contestant (ze tip tipa akum)
-
+        int wins = this->num_wins_for_team(teamId).ans();
         StrCond strCond1 = StrCond(ptrTeam->get_power(),teamId); // before adding
 
         ptrTeam->add_contestant_to_team(con);
 
         StrCond strCond2 = StrCond(ptrTeam->get_power(),teamId); //after adding
 
+
+        this->teamsTree.insert(strCond2,ptrTeam);
+
         if (ptrTeam->get_number_of_players() > 1) {
             this->teamsTree.remove(strCond1);
+            this->teamsTree.addExtraSingle(strCond2, wins);
         }
-        this->teamsTree.insert(strCond2,ptrTeam);
+
 
     }  catch (std::bad_alloc &error) {
             return StatusType::ALLOCATION_ERROR;
@@ -307,8 +311,8 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
     try {
         StrCond condLow = StrCond(lowPower,-1);
         StrCond condHigh = StrCond(highPower,-1);
-        Team *rankLow = teamsTree.findClosestSmall(condLow)->getNodeData();
-        Team *rankHigh = teamsTree.findClosestBig(condHigh)->getNodeData();
+        Team *rankLow = teamsTree.findClosestBig(condLow)->getNodeData();
+        Team *rankHigh = teamsTree.findClosestSmall(condHigh)->getNodeData();
 
         winner_id = rankHigh->get_team_id();
 

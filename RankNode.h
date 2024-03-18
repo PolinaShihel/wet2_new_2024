@@ -103,29 +103,49 @@ RankNode<T,Cond>* RankNode<T,Cond>::findMaxWins(){
 //}
 
 template<class T,class Cond>
-RankNode<T,Cond>* RankNode<T,Cond>::findClosestSmall(Cond& toFind, RankNode<T,Cond>* current)
-{
-    if(this == nullptr && current == nullptr)
-        throw KeyNotFound();
-    if(this == nullptr)
-        return current;
+//RankNode<T,Cond>* RankNode<T,Cond>::findClosestSmall(Cond& toFind, RankNode<T,Cond>* current)
+//{
+//    if(this == nullptr && current == nullptr)
+//        throw KeyNotFound();
+//    if(this == nullptr)
+//        return current;
+//    if(this->key < toFind)
+//        return this->right ? this->right->findClosestSmall(toFind, this) : this;;
+//    else
+//        return this->left ? this->left->findClosestSmall(toFind, current) : current;
+//}
+
+RankNode<T, Cond>* RankNode<T,Cond>::findClosestSmall(Cond& toFind, RankNode<T, Cond>* current) {
+    if(this == nullptr) return current;
+
     if(this->key < toFind)
-        return this->right->findClosestSmall(toFind, current);
-    else if(this->key > toFind)
-        return this->left->findClosestSmall(toFind, this);
+        return this->right ? this->right->findClosestSmall(toFind, this) : this;
+    else
+        return this->left ? this->left->findClosestSmall(toFind, current) : current;
 }
 
+
+
+
 template<class T,class Cond>
-RankNode<T,Cond>* RankNode<T,Cond>::findClosestBig(Cond& toFind, RankNode<T,Cond>* current)
-{
-    if(this == nullptr && current == nullptr)
-        throw KeyNotFound();
-    if(this == nullptr)
-        return current;
+//RankNode<T,Cond>* RankNode<T,Cond>::findClosestBig(Cond& toFind, RankNode<T,Cond>* current)
+//{
+//    if(this == nullptr && current == nullptr)
+//        throw KeyNotFound();
+//    if(this == nullptr)
+//        return current;
+//    if(this->key < toFind)
+//        return this->right->findClosestBig(toFind, this);
+//    else if(this->key > toFind)
+//        return this->left->findClosestBig(toFind, current);
+//}
+RankNode<T, Cond>* RankNode<T,Cond>::findClosestBig(Cond& toFind, RankNode<T, Cond>* current) {
+    if(this == nullptr) return current;
+
     if(this->key < toFind)
-        return this->right->findClosestBig(toFind, this);
-    else if(this->key > toFind)
-        return this->left->findClosestBig(toFind, current);
+        return this->right ? this->right->findClosestBig(toFind, current) : current;
+    else
+        return this->left ? this->left->findClosestBig(toFind, this) : this;
 }
 
 template<class T,class Cond>
