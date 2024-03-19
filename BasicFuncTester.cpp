@@ -213,6 +213,12 @@ int main() {
     print(ol.play_tournament(40,10));cout << "==INVALID INPUT " <<  endl;
     print(ol.play_tournament(40,40));cout << "==INVALID INPUT " <<  endl;
     print(ol.play_tournament(20,70)); cout << "==FAILURE " <<  endl; // not power of 2
+    cout << "wins for the teams before tournament: " << endl;
+    print(ol.num_wins_for_team(5));cout << " == SUCCESS , 0 "<<endl; // first place
+    print(ol.num_wins_for_team(1));cout << " == SUCCESS , 7 "<<endl; // second place
+    print(ol.num_wins_for_team(3));cout << " == SUCCESS , 0 "<<endl; // third place
+    print(ol.num_wins_for_team(2));cout << " == SUCCESS , 3 "<<endl; // fourth
+   cout << "starting tournament:" << endl;
   print(ol.play_tournament(30,70)); // (6 ,8,7,9,4,2,3,1,5, 10) (20, 30,30,40,40,44,60,60,69, 71)
     //team1 players: 10,6,8,9,20,22    power:10*6=60 + 7 = 67 + 1 = 68
     //team2 players: 11,5,16,10       power 11*4 = 44 + 3  = 47 + 1 = 48
@@ -224,24 +230,51 @@ int main() {
     //team8 players: 30              power: 30
     //team9 players: 40              power: 40
     //team10 players: 71             power: 71
-    cout << " == SUCCESS , 5" <<endl;
+    cout << " == SUCCESS , 5"  << "    after the tournament :" << endl;
     print(ol.num_wins_for_team(5));cout << " == SUCCESS , 3 "<<endl; // + 3
-    print(ol.num_wins_for_team(3));cout << " == SUCCESS , 2 "<<endl; // + 2
-    print(ol.num_wins_for_team(1));cout << " == SUCCESS , 8 "<<endl; // 7 + 1
+    print(ol.num_wins_for_team(1));cout << " == SUCCESS , 9 "<<endl; // 7 + 2
+    print(ol.num_wins_for_team(3));cout << " == SUCCESS , 1 "<<endl; // + 1
     print(ol.num_wins_for_team(2));cout << " == SUCCESS , 4 "<<endl; // 3+ 1
     print(ol.num_wins_for_team(6));cout << " == SUCCESS , 0 "<<endl;
     print(ol.num_wins_for_team(8));cout << " == SUCCESS , 0 "<<endl;
     print(ol.num_wins_for_team(10));cout << " == SUCCESS , 0 "<<endl;
     print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 72 "<<endl;
-
-    print(ol.play_tournament(30,40));cout << " == SUCCESS , 4 "<<endl;// (6 ,8,7,9,4,2,3,1,5, 10) (20, 30,30,40,40,44,54,60,69, 71)
-    print(ol.num_wins_for_team(9));cout << " == SUCCESS , 1 "<<endl;
-    print(ol.num_wins_for_team(4));cout << " == SUCCESS , 2 "<<endl;
-    //print(ol.num_wins_for_team(9));cout << " == SUCCESS , 4 "<<endl; // +2 //AT THE START OF THE MATCH WAS 0 WINS NOW NEEDS TO BE 1
-    //print(ol.num_wins_for_team(4));cout << " == SUCCESS , 1 "<<endl; // +1 NOT SURE IF TRUE, 4 WINS 2 POINTS AND WAS 0 BEFORE
+// (6 ,8,7,9,4,2,3,1,5, 10) (20, 30,30,40,40,44,60,60,69, 71)
+    print(ol.play_tournament(30,40));cout << " == SUCCESS , 4 "<<endl;
+    print(ol.num_wins_for_team(4));cout << " == SUCCESS , 2 "<<endl; // first place + 2
+    print(ol.num_wins_for_team(9));cout << " == SUCCESS , 1 "<<endl; // second place + 1
     print(ol.num_wins_for_team(8));cout << " == SUCCESS , 0 "<<endl;
     print(ol.num_wins_for_team(7));cout << " == SUCCESS , 0 "<<endl;
+    cout << "another check1" << endl;
+    print(ol.remove_newest_player(9));cout << " == SUCCESS "<<endl;
+    print(ol.num_wins_for_team(9));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.add_player(9,25));cout << " == SUCCESS  "<<endl;
+    print(ol.play_tournament(25,40));cout<< " == SUCCESS , 4  "<<endl;
+    print(ol.num_wins_for_team(4));cout << " == SUCCESS , 4 "<<endl; // first place + 2
+    print(ol.num_wins_for_team(7));cout << " == SUCCESS , 1 "<<endl; // second place + 1
+    print(ol.num_wins_for_team(8));cout << " == SUCCESS , 0 "<<endl;
+    print(ol.num_wins_for_team(9));cout << " == SUCCESS , 1 "<<endl;
+    cout << "another check2" << endl;
+    // (6 9,8,7,4,2,3,1,5, 10) (20, 25,30,30,40,44,60,60,69, 71)
+    print(ol.play_tournament(30,44));cout<< " == SUCCESS , 2  "<<endl;
+    print(ol.num_wins_for_team(2));cout << " == SUCCESS , 6 "<<endl; // first place + 2 // 4+2
+    print(ol.num_wins_for_team(4));cout << " == SUCCESS , 5 "<<endl; // second place + 1 // 4+1
+    print(ol.num_wins_for_team(7));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.num_wins_for_team(8));cout << " == SUCCESS , 0 "<<endl;
 
+
+    cout << "more tests: " << endl;
+    print(ol.remove_newest_player(10));
+    print(ol.add_player(10,74));
+    print(ol.add_team(11));cout << " == SUCCESS "<<endl;
+    print(ol.unite_teams(11,10));cout << " == SUCCESS  "<<endl;
+    print(ol.num_wins_for_team(10));cout << " == FAILURE "<<endl;
+    print(ol.num_wins_for_team(11));cout << " == SUCCESS , 0 "<<endl;
+    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 74 "<<endl;//now team11: 74
+    print(ol.remove_newest_player(7));cout << " == SUCCESS  "<<endl;
+    print(ol.unite_teams(7,11));cout << " == SUCCESS "<<endl;
+    print(ol.num_wins_for_team(7));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 75 "<<endl;//now team7: 74 + 1 = 75
 
     return 0;
 }
