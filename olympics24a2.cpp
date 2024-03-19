@@ -259,7 +259,7 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
             return StatusType::SUCCESS;
         }
         if(team1Size == 0){
-            int wins = this->num_wins_for_team(teamId2).ans();
+            int wins = this->num_wins_for_team(teamId1).ans();
             team1->setEntryTree(team2->getEntryTree());
             team1->setStrTree(team2->getStrTree());
             team1->set_power(team2->get_power());
