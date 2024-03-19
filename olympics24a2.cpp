@@ -259,6 +259,7 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
             return StatusType::SUCCESS;
         }
         if(team1Size == 0){
+            int wins = this->num_wins_for_team(teamId2).ans();
             team1->setEntryTree(team2->getEntryTree());
             team1->setStrTree(team2->getStrTree());
             team1->set_power(team2->get_power());
@@ -268,6 +269,7 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
             this->teamsHash.remove(teamId2);
             this->teamsTree.remove(team2cond);
             this->teamsTree.insert(team1cond, team1);
+            this->teamsTree.addExtraSingle(team1cond, wins);
             this->number_of_teams--;
             delete team2;
             return StatusType::SUCCESS;
