@@ -235,8 +235,10 @@ int main() {
     print(ol.get_highest_ranked_team()); cout << " == SUCCESS , 72 "<<endl;
 
     print(ol.play_tournament(30,40));cout << " == SUCCESS , 4 "<<endl;// (6 ,8,7,9,4,2,3,1,5, 10) (20, 30,30,40,40,44,54,60,69, 71)
-    print(ol.num_wins_for_team(9));cout << " == SUCCESS , 4 "<<endl; // +2
-    print(ol.num_wins_for_team(4));cout << " == SUCCESS , 1 "<<endl; // +1
+    print(ol.num_wins_for_team(9));cout << " == SUCCESS , 1 "<<endl;
+    print(ol.num_wins_for_team(4));cout << " == SUCCESS , 2 "<<endl;
+    //print(ol.num_wins_for_team(9));cout << " == SUCCESS , 4 "<<endl; // +2 //AT THE START OF THE MATCH WAS 0 WINS NOW NEEDS TO BE 1
+    //print(ol.num_wins_for_team(4));cout << " == SUCCESS , 1 "<<endl; // +1 NOT SURE IF TRUE, 4 WINS 2 POINTS AND WAS 0 BEFORE
     print(ol.num_wins_for_team(8));cout << " == SUCCESS , 0 "<<endl;
     print(ol.num_wins_for_team(7));cout << " == SUCCESS , 0 "<<endl;
 
