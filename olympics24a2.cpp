@@ -352,7 +352,7 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
     int winner_id=0;
     try {
         StrTeamCond condLow = StrTeamCond(lowPower,INT_MAX);
-        StrTeamCond condHigh = StrTeamCond(highPower,INT_MAX);
+        StrTeamCond condHigh = StrTeamCond(highPower,-1);
         Team *rankLow = teamsTree.findClosestSmall(condLow)->getNodeData();
         Team *rankHigh = teamsTree.findClosestBig(condHigh)->getNodeData();
         if(rankLow == nullptr || rankHigh == nullptr)

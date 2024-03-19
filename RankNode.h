@@ -115,7 +115,6 @@ RankNode<T,Cond>* RankNode<T,Cond>::findClosestSmall(Cond& toFind, RankNode<T,Co
         return this->left->findClosestSmall(toFind, this);
 }
 
-
 template<class T,class Cond>
 RankNode<T,Cond>* RankNode<T,Cond>::findClosestBig(Cond& toFind, RankNode<T,Cond>* current)
 {
