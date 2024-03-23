@@ -328,7 +328,7 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey, int sum)
                     toSwap->extraW = toSwap->right->extraW;
             }
         }
-        toSwap->left = toSwap->left->deleteNode(newKey, sum - this->extra + toSwap->extra ); //TODO:check this
+        toSwap->left = toSwap->left->deleteNode(newKey, sum - this->extra + toSwap->extra );
         toSwap->calcHeight();
         toSwap->rank--;
         return toSwap->rotate(sum);
