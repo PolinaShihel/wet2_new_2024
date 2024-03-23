@@ -374,7 +374,7 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
 
 
         int wins =PowerOfTwo(highRank-lowRank+1);
-        if(wins  < 0) {
+        if(wins  <= 0) {
             return StatusType::FAILURE;
         }
 
