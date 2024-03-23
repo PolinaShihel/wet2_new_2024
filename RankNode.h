@@ -328,10 +328,11 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey, int sum)
                     toSwap->extraW = toSwap->right->extraW;
             }
         }
-        toSwap->left = toSwap->left->deleteNode(newKey, sum - this->extra + toSwap->extra );
+        int newSum = sum - this->extra + toSwap->extra;
+        toSwap->left = toSwap->left->deleteNode(newKey, newSum );
         toSwap->calcHeight();
         toSwap->rank--;
-        return toSwap->rotate(sum);
+        return toSwap->rotate(newSum );
     }
     this->findMax(this->getKey(), sum);
     this->calcHeight();
