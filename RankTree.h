@@ -105,7 +105,7 @@ void RankTree<T,Cond>::inOrderTraversal() {
 }
 
 template<class T,class Cond>
-RankNode<T,Cond>* RankTree<T,Cond>::sortedArrayTo( RankNode<T, Cond>* arr[],S
+RankNode<T,Cond>* RankTree<T,Cond>::sortedArrayTo( RankNode<T, Cond>* arr[],
                                                    int start, int end)
 {
     if (start > end)
