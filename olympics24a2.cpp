@@ -1,5 +1,7 @@
 #include "olympics24a2.h"
 
+#define MAX 0x7fffffff
+
 olympics_t::olympics_t(): teamsHash(), number_of_teams(0) ,teamsTree() {}
 
 void deleteTrav(Node<Team*, int>* node){
@@ -353,7 +355,7 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
         return StatusType::INVALID_INPUT;
     int winner_id=0;
     try {
-        StrTeamCond condLow = StrTeamCond(lowPower,INT_MAX);
+        StrTeamCond condLow = StrTeamCond(lowPower,MAX);
         StrTeamCond condHigh = StrTeamCond(highPower,-1);
         Team *rankLow = teamsTree.findClosestSmall(condLow)->getNodeData();
         Team *rankHigh = teamsTree.findClosestBig(condHigh)->getNodeData();

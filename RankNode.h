@@ -111,7 +111,7 @@ RankNode<T,Cond>* RankNode<T,Cond>::findClosestSmall(Cond& toFind, RankNode<T,Co
         return current;
     if(this->key < toFind)
         return this->right->findClosestSmall(toFind, current);
-    else if(this->key > toFind)
+    else
         return this->left->findClosestSmall(toFind, this);
 }
 
@@ -124,7 +124,7 @@ RankNode<T,Cond>* RankNode<T,Cond>::findClosestBig(Cond& toFind, RankNode<T,Cond
         return current;
     if(this->key < toFind)
         return this->right->findClosestBig(toFind, this);
-    else if(this->key > toFind)
+    else
         return this->left->findClosestBig(toFind, current);
 }
 

@@ -22,7 +22,7 @@ private:
     void rehash();
 public:
     AVLTree<T, Cond>* members;
-    hashTable() : members(new AVLTree<T, Cond>[INITIAL_SIZE]()), size(INITIAL_SIZE), elementsCount(0) {}
+    hashTable() : size(INITIAL_SIZE),elementsCount(0),members(new AVLTree<T, Cond>[INITIAL_SIZE]()) {}
     ~hashTable();
     int getSize();
     T* find(Cond key);
