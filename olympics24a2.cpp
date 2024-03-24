@@ -373,9 +373,11 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
         int lowRank = teamsTree.Rank(condLow);
         int highRank = teamsTree.Rank(condHigh);
 
+        if(lowRank == highRank)
+            return rankLow->get_team_id();
 
         int wins =PowerOfTwo(highRank-lowRank+1);
-        if(wins  <= 0) {
+        if(wins < 0) {
             return StatusType::FAILURE;
         }
 
