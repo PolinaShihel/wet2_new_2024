@@ -242,10 +242,14 @@ void RankNode<T, Cond>::setRank(int toSet)
 template<class T, class Cond>
 void RankNode<T,Cond>::findMax(int str, int sum)
 {
-    this->extraW = str + sum;
-    this->bigExtraW = this;
+        this->extraW = str + sum;
+        this->bigExtraW = this;
     if(this->left != nullptr && this->left->extraW > this->extraW) {
         this->extraW = this->left->extraW;
+        this->bigExtraW = this->left->bigExtraW;
+    }
+    if(this->left != nullptr && this->right == nullptr && this->left->extraW + sum > this->extraW ){
+        this->extraW = this->left->extraW + sum;
         this->bigExtraW = this->left->bigExtraW;
     }
     if(this->right != nullptr && this->right->extraW > this->extraW) {
