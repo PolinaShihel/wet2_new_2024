@@ -569,7 +569,7 @@ void RankNode<T,Cond>::AddExtra(const Cond& end, int toAdd)
     }
     else{//key==end
         this->extra += toAdd;
-        if(this->left!=nullptr)
+        if(this->left!=nullptr && this->right != nullptr)
             this->left->extraW+=toAdd;
         this->findMax(this->getKey(), this->extra);
         if(this->right!= nullptr)
@@ -607,7 +607,7 @@ void RankNode<T,Cond>::AddExtraAux(const Cond& end, int toAdd, int prevDirection
         if(this->right!= nullptr){
             this->right->extra-=toAdd;
         }
-        if(this->left!= nullptr)
+        if(this->left!= nullptr && this->right != nullptr)
             this->left->extraW+=toAdd;
         this->findMax(this->getKey(), sum + this->extra);
     }
