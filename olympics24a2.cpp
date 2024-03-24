@@ -89,7 +89,8 @@ StatusType olympics_t::add_player(int teamId, int playerStrength)
 
         StrTeamCond strCond2 = StrTeamCond(ptrTeam->get_power(),teamId); //after adding
 
-
+        if(strCond2 == strCond1)
+            return StatusType::SUCCESS;
         this->teamsTree.insert(strCond2,ptrTeam);
 
         if (ptrTeam->get_number_of_players() > 1) {
