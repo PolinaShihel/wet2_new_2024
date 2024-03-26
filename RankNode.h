@@ -24,15 +24,18 @@ class RankNode {
     int extra;
     int extraW;
     RankNode *bigExtraW;
+
 public:
+    int amount;
+
     RankNode(Cond key, T data): key(key), right(nullptr),left(nullptr), height(0),
-                                data(data), rank(1),extra(0),extraW(key),bigExtraW(this){};
+                                data(data), rank(1),extra(0),extraW(key),bigExtraW(this),amount(0){};
     RankNode(Cond key, T data,int rank): key(key), right(nullptr),left(nullptr), height(0),
-                                         data(data),rank(rank),extra(0),extraW(key),bigExtraW(this){};
+                                         data(data),rank(rank),extra(0),extraW(key),bigExtraW(this),amount(0){};
     RankNode(Cond key, T data,int rank, int extra): key(key), right(nullptr),left(nullptr), height(0),
-                                                    data(data),rank(rank),extra(extra),extraW(key),bigExtraW(this){};
+                                                    data(data),rank(rank),extra(extra),extraW(key),bigExtraW(this),amount(0){};
     RankNode(Cond key, T data,int rank, int extra, int extraW): key(key), right(nullptr),left(nullptr), height(0),
-                                                                data(data),rank(rank),extra(extra),extraW(extraW){}; //NOT SURE NEEDED
+                                                                data(data),rank(rank),extra(extra),extraW(extraW),amount(0){}; //NOT SURE NEEDED
     RankNode *insertNode(const Cond &key, const T &data, int sum);
     RankNode *deleteNode(const Cond &newKey, int sum);
     RankNode *findNode(const Cond &newKey);
@@ -74,7 +77,8 @@ public:
     RankNode<T,Cond>* findMaxWins();
     int getMaxRank();
     void setKey(const Cond& newCond);
-};
+    int findSumExtras(const Cond &toFind, int sum);
+    };
 
 template<class T,class Cond>
 void RankNode<T,Cond>::setKey(const Cond &newCond) {
@@ -132,18 +136,39 @@ template<class T,class Cond>
 void RankNode<T,Cond>::addExtraSingle(Cond &end, int toAdd, int sum) {
     if(this== nullptr)
         throw KeyNotFound();
-    if(this->key < end)
-         this->right->addExtraSingle(end,toAdd, sum + this->extra);
-    else if(this->key > end)
-        this->left->addExtraSingle(end, toAdd, sum + this->extra);
+    if(this->key < end) {
+        this->amount += this->extra;
+        if(this->right != nullptr)
+            this->right->extra += this->extra;
+        if(this->left != nullptr)
+            this->left->extra += this->extra;
+        this->extra = 0;
+        this->right->addExtraSingle(end, toAdd, this->extra);
+    }
+    else if(this->key > end) {
+        this->amount += this->extra;
+        if(this->right != nullptr)
+            this->right->extra += this->extra;
+        if(this->left != nullptr)
+            this->left->extra += this->extra;
+        this->extra = 0;
+        this->left->addExtraSingle(end, toAdd, this->extra);
+    }
     else{//key found
         this->extra+=toAdd;
         if(this->left!= nullptr)
             this->left->extra-=toAdd;
         if(this->right!= nullptr)
             this->right->extra-=toAdd;
+
+        this->amount += this->extra;
+        if(this->right != nullptr)
+            this->right->extra += this->extra;
+        if(this->left != nullptr)
+            this->left->extra += this->extra;
+        this->extra = 0;
     }
-    this->findMax(this->key, sum + this->extra);
+    this->findMax(this->key, this->amount);
 }
 
 template<class T,class Cond>
@@ -184,11 +209,29 @@ template<class T,class Cond>
 int RankNode<T,Cond>::findSum(const Cond &toFind, int sum) {
     if(this == nullptr)
         throw KeyNotFound();
-    sum+=this->extra;
+    this->amount+= this->extra;
+    if(this->right != nullptr)
+        this->right->extra += this->extra;
+    if(this->left != nullptr)
+        this->left->extra += this->extra;
+    this->extra = 0;
     if(this->key < toFind)
         return this->right->findSum(toFind, sum);
     else if(this->key > toFind)
         return this->left->findSum(toFind, sum);
+    else
+        return this->amount;
+}
+
+template<class T,class Cond>
+int RankNode<T,Cond>::findSumExtras(const Cond &toFind, int sum) {
+    if(this == nullptr)
+        throw KeyNotFound();
+    sum+= this->extra;
+    if(this->key < toFind)
+        return this->right->findSumExtras(toFind, sum);
+    else if(this->key > toFind)
+        return this->left->findSumExtras(toFind, sum);
     else
         return sum;
 }
@@ -211,19 +254,26 @@ template<class T, class Cond>
 RankNode<T,Cond> *RankNode<T,Cond>::insertNode(const Cond &newKey, const T &newData, int sum)
 {
     if(this == nullptr){
-        return new RankNode<T, Cond>(newKey, newData, 1, -sum);
+        return new RankNode<T, Cond>(newKey, newData, 1, 0);
     }
-    sum+=this->extra;
+    this->amount += this->extra;
+    if(this->right != nullptr)
+        this->right->extra += this->extra;
+    if(this->left != nullptr)
+        this->left->extra += this->extra;
+    this->extra = 0;
+
     if (this->key < newKey) {
-        this->right = this->right->insertNode(newKey, newData, sum);
+
+        this->right = this->right->insertNode(newKey, newData, 0);
     } else if (this->key > newKey) {
-        this->left = this->left->insertNode(newKey, newData, sum);
+        this->left = this->left->insertNode(newKey, newData, 0);
     }else
         throw KeyExists();
     this->calcHeight();
     this->rank++;
-    this->findMax(this->getKey(), sum);
-    return this->rotate(sum);
+    this->findMax(this->getKey(), this->amount);
+    return this->rotate(0);
 }
 
 template<class T, class Cond>
@@ -244,16 +294,17 @@ void RankNode<T,Cond>::findMax(int str, int sum)
 {
         this->extraW = str + sum;
         this->bigExtraW = this;
-    if(this->left != nullptr && this->left->extraW > this->extraW) {
-        this->extraW = this->left->extraW;
+//    if(this->left != nullptr && this->left->extraW > this->extraW) {
+//        this->extraW = this->left->extraW;
+//        this->bigExtraW = this->left->bigExtraW;
+//    }
+    //if(this->left != nullptr && this->right == nullptr && this->left->extraW + sum > this->extraW ){
+    if(this->left != nullptr  && this->left->extraW + this->left->extra > this->extraW ){
+    this->extraW = this->left->extraW + this->left->extra ;
         this->bigExtraW = this->left->bigExtraW;
     }
-    if(this->left != nullptr && this->right == nullptr && this->left->extraW + sum > this->extraW ){
-        this->extraW = this->left->extraW + sum;
-        this->bigExtraW = this->left->bigExtraW;
-    }
-    if(this->right != nullptr && this->right->extraW > this->extraW) {
-        this->bigExtraW = this->right->bigExtraW;
+    if(this->right != nullptr && this->right->extraW + this->right->extra  > this->extraW) {
+        this->bigExtraW = this->right->bigExtraW + this->right->extra;
         this->extraW = this->right->extraW;
     }
 }
@@ -264,16 +315,21 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey, int sum)
     RankNode<T, Cond> *toSwap;
     if (this == nullptr)
         throw KeyNotFound();
-    sum+=this->extra;
+    this->amount += this->extra;
+    if(this->right != nullptr)
+        this->right->extra += this->extra;
+    if(this->left != nullptr)
+        this->left->extra += this->extra;
+    this->extra = 0;
     if (newKey < this->key) {
         if (this->left == nullptr)
             throw KeyNotFound();
-        this->left = this->left->deleteNode(newKey, sum);
+        this->left = this->left->deleteNode(newKey, 0);
     }
     else if (newKey > this->key) {
         if (this->right == nullptr)
             throw KeyNotFound();
-        this->right = this->right->deleteNode(newKey, sum);
+        this->right = this->right->deleteNode(newKey, 0);
     }
     else {
         if ((this->left == nullptr) && (this->right == nullptr)) {
@@ -284,12 +340,14 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey, int sum)
             toSwap = this->left;
             this->left = nullptr;
             delete this;
+            toSwap->findMax(toSwap->getKey(), toSwap->amount);
             return toSwap;
         } else if ((this->left == nullptr) && (this->right != nullptr)) {
             this->right->extra += this->extra;
             toSwap = this->right;
             this->right = nullptr;
             delete this;
+            toSwap->findMax(toSwap->getKey(), toSwap->amount);
             return toSwap;
         } else {
             RankNode<T, Cond> *temp;
@@ -303,12 +361,12 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey, int sum)
                     temp->extra+=toSwap->extra;
                     temp->extra-=this->extra;
                 }
-                toSwap->extra = this->findSum(toSwap->key,0);
+                toSwap->extra = this->findSumExtras(toSwap->key,0);
                 this->right->extra+=(this->extra - toSwap->extra);
                 this->left->extra+=(this->extra - toSwap->extra);
                 biggestFather->right = this;
                 swap(this, toSwap);
-                toSwap->findMax(toSwap->getKey(), sum - this->extra + toSwap->extra);
+                toSwap->findMax(toSwap->getKey(), toSwap->amount - this->extra + toSwap->extra);
                 this->right = nullptr;
                 this->left = temp;
                 tempRank = this->rank;
@@ -338,7 +396,7 @@ RankNode<T,Cond> *RankNode<T,Cond>::deleteNode(const Cond &newKey, int sum)
         toSwap->rank--;
         return toSwap->rotate(newSum );
     }
-    this->findMax(this->getKey(), sum);
+    this->findMax(this->getKey(), this->amount);
     this->calcHeight();
     this->rank--;
     return this->rotate(sum);
@@ -381,6 +439,20 @@ template<class T, class Cond>
 RankNode<T,Cond> *RankNode<T,Cond>::roll_LL(int sum)
 {
     RankNode<T, Cond> *temp = left;
+//    this->amount += this->extra;
+//    if(this->right != nullptr)
+//        this->right->extra += this->extra;
+//    if(this->left != nullptr)
+//        this->left->extra += this->extra;
+//    this->extra = 0;
+//
+//    temp->amount += temp->extra;
+//    if(temp->right != nullptr)
+//        temp->right->extra += temp->extra;
+//    if(temp->left != nullptr)
+//        temp->left->extra += temp->extra;
+//    temp->extra = 0;
+
     int AL =0, AR = 0, BR = 0;
     if(temp->right != nullptr)
         AR = temp->right->rank;
@@ -396,9 +468,9 @@ RankNode<T,Cond> *RankNode<T,Cond>::roll_LL(int sum)
     if(temp->right != nullptr)
         temp->right->extra -= this->extra;
     this->left = temp->right;
-    this->findMax(this->getKey(), sum); //NOT SURE IF SUM + TEMP.EXTRA NEEDED
+    this->findMax(this->getKey(), this->amount + sum); //NOT SURE IF SUM + TEMP.EXTRA NEEDED
     temp->right = this;
-    temp->findMax(temp->getKey(), sum + oldTemp); //NOT SURE
+    temp->findMax(temp->getKey(), oldTemp + temp->amount + sum); //NOT SURE
     this->calcHeight();
     temp->calcHeight();
     return temp;
@@ -424,8 +496,8 @@ RankNode<T,Cond> *RankNode<T,Cond>::roll_RR(int sum)
     if(temp->left != nullptr)
         temp->left->extra -= this->extra;
     temp->left = this;
-    this->findMax(this->getKey(), sum);
-    temp->findMax(temp->getKey(), sum + oldTemp);
+    this->findMax(this->getKey(),  this->amount + sum);
+    temp->findMax(temp->getKey(),  oldTemp + temp->amount + sum);
     this->calcHeight();
     temp->calcHeight();
     return temp;
@@ -564,23 +636,35 @@ void RankNode<T,Cond>::AddExtra(const Cond& end, int toAdd)
         throw KeyNotFound();
     if(this->key < end){
         this->extra += toAdd;
-        if(this->left!= nullptr)
-            this->left->extraW+=toAdd;
+        this->amount += this->extra;
+        if(this->right != nullptr)
+            this->right->extra += this->extra;
+        if(this->left != nullptr)
+            this->left->extra += this->extra;
+        this->extra = 0;
+//        if(this->left!= nullptr)
+//            this->left->extraW+=toAdd;
         this->right->AddExtraAux(end,toAdd,RIGHT,this->extra);
     }
     else if(this->key > end){
         this->left->AddExtraAux(end,toAdd,LEFT, this->extra);
     }
     else{//key==end
-        this->extra += toAdd;
-        if(this->left!=nullptr && this->right != nullptr)
-            this->left->extraW+=toAdd;
-        this->findMax(this->getKey(), this->extra);
         if(this->right!= nullptr)
             this->right->extra-=toAdd;
+        this->extra += toAdd;
+        this->amount += this->extra;
+        if(this->right != nullptr)
+            this->right->extra += this->extra;
+        if(this->left != nullptr)
+            this->left->extra += this->extra;
+        this->extra = 0;
+//        if(this->left!=nullptr && this->right != nullptr)
+//            this->left->extraW+=toAdd;
+        this->findMax(this->getKey(), this->amount);
         return;
     }
-    this->findMax(this->getKey(), this->extra);
+    this->findMax(this->getKey(), this->amount);
 }
 
 template<class T, class Cond>
@@ -592,17 +676,29 @@ void RankNode<T,Cond>::AddExtraAux(const Cond& end, int toAdd, int prevDirection
     {
         if(prevDirection == RIGHT)
             this->extra-=toAdd;
-        this->left->AddExtraAux(end, toAdd, LEFT, sum + this->extra);
-        this->findMax(this->getKey(), sum + this->extra);
+        this->amount += this->extra;
+        if(this->right != nullptr)
+            this->right->extra += this->extra;
+        if(this->left != nullptr)
+            this->left->extra += this->extra;
+        this->extra = 0;
+        this->left->AddExtraAux(end, toAdd, LEFT, this->extra);
+        this->findMax(this->getKey(), this->amount);
     }
     else if(this->key < end)
     {
         if(prevDirection == LEFT)
             this->extra+=toAdd;
-        if(this->left!= nullptr)
-            this->left->extraW+=toAdd;
-        this->right->AddExtraAux(end, toAdd, RIGHT, sum + this->extra);
-        this->findMax(this->getKey(), sum + this->extra);
+        this->amount += this->extra;
+        if(this->right != nullptr)
+            this->right->extra += this->extra;
+        if(this->left != nullptr)
+            this->left->extra += this->extra;
+        this->extra = 0;
+//        if(this->left!= nullptr)
+//            this->left->extraW+=toAdd;
+        this->right->AddExtraAux(end, toAdd, RIGHT, this->extra);
+        this->findMax(this->getKey(), this->amount);
     }
     else//found
     {
@@ -611,9 +707,15 @@ void RankNode<T,Cond>::AddExtraAux(const Cond& end, int toAdd, int prevDirection
         if(this->right!= nullptr){
             this->right->extra-=toAdd;
         }
-        if(this->left!= nullptr && this->right != nullptr)
-            this->left->extraW+=toAdd;
-        this->findMax(this->getKey(), sum + this->extra);
+        this->amount += this->extra;
+        if(this->right != nullptr)
+            this->right->extra += this->extra;
+        if(this->left != nullptr)
+            this->left->extra += this->extra;
+        this->extra = 0;
+//        if(this->left!= nullptr && this->right != nullptr)
+//            this->left->extraW+=toAdd;
+        this->findMax(this->getKey(), this->amount);
     }
 }
 
