@@ -380,7 +380,10 @@ output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
         if(wins < 0) {
             return StatusType::FAILURE;
         }
-
+        if(wins == 1){
+            teamsTree.addExtraSingle(condHigh,wins);
+            return winner_id;
+        }
         teamsTree.addExtra(condHigh, wins);
         int i=1;
         while(wins > 1) {
