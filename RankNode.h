@@ -63,7 +63,6 @@ public:
     RankNode *isExist(const Cond &newKey);
     void setRank(int rank);
     //int getRank();
-    int getWeight();
     void AddExtra(const Cond& end, int toAdd);
     void AddExtraAux(const Cond& end, int toAdd, int prevDirection, int sum);
     void inOrderTraversal(int depth);
@@ -124,6 +123,7 @@ RankNode<T,Cond>* RankNode<T,Cond>::findClosestSmall(Cond& toFind, RankNode<T,Co
         throw KeyNotFound();
     if(this == nullptr)
         return current;
+    this->updateAmount();
     if(this->key < toFind)
         return this->right->findClosestSmall(toFind, current);
     else
@@ -137,6 +137,7 @@ RankNode<T,Cond>* RankNode<T,Cond>::findClosestBig(Cond& toFind, RankNode<T,Cond
         throw KeyNotFound();
     if(this == nullptr)
         return current;
+    this->updateAmount();
     if(this->key < toFind)
         return this->right->findClosestBig(toFind, this);
     else
@@ -170,6 +171,7 @@ template<class T,class Cond>
 int RankNode<T,Cond>::Rank(Cond &toFind) {
     if(this == nullptr)
         throw KeyNotFound();
+    this->updateAmount();
     if(this->key < toFind){
         if(this->left!= nullptr)
             return this->left->rank + 1 + this->right->Rank(toFind);
@@ -190,6 +192,7 @@ T* RankNode<T,Cond>::select(int rank, int sum)
     if(this == nullptr)
         throw KeyNotFound();
     int thisRank = 1 + sum;
+    this->updateAmount();
     if(this->left != nullptr)
         thisRank+=this->left->rank;
     if(thisRank < rank)
@@ -204,12 +207,7 @@ template<class T,class Cond>
 int RankNode<T,Cond>::findSum(const Cond &toFind, int sum) {
     if(this == nullptr)
         throw KeyNotFound();
-    this->amount+= this->extra;
-    if(this->right != nullptr)
-        this->right->extra += this->extra;
-    if(this->left != nullptr)
-        this->left->extra += this->extra;
-    this->extra = 0;
+    this->updateAmount();
     if(this->key < toFind)
         return this->right->findSum(toFind, sum);
     else if(this->key > toFind)
@@ -238,11 +236,6 @@ void RankNode<T,Cond>::inOrderTraversal(int depth) {
     this->left->inOrderTraversal(depth+1);
     std::cout <<"key: " << this->key <<" rank: "<<this->rank <<" extra: "<<this->extra<<" depth: "<<depth <<std::endl;
     this->right->inOrderTraversal(depth+1);
-}
-
-template<class T, class Cond>
-int RankNode<T,Cond>::getWeight() {
-    return this->rank;
 }
 
 template<class T, class Cond>
@@ -630,6 +623,7 @@ void RankNode<T,Cond>::AddExtra(const Cond& end, int toAdd)
         this->right->AddExtraAux(end,toAdd,RIGHT,this->extra);
     }
     else if(this->key > end){
+        this->updateAmount();
         this->left->AddExtraAux(end,toAdd,LEFT, this->extra);
     }
     else{//key==end
