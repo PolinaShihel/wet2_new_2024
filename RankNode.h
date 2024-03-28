@@ -535,7 +535,8 @@ RankNode<T, Cond> *RankNode<T, Cond>::roll_LL(int sum) {
         BR = this->right->rank;
     this->rank = BR + AR + 1;
     temp->rank = AL + this->rank + 1;
-    int oldTemp = temp->extra;
+//    int oldTemp = temp->extra;
+    temp->updateAmount();
     temp->extra += this->extra;
     this->extra -= temp->extra;
     if (temp->right != nullptr)
@@ -543,7 +544,7 @@ RankNode<T, Cond> *RankNode<T, Cond>::roll_LL(int sum) {
     this->left = temp->right;
     this->findMax(this->getKey(), this->amount + sum); //NOT SURE IF SUM + TEMP.EXTRA NEEDED
     temp->right = this;
-    temp->findMax(temp->getKey(), oldTemp + temp->amount + sum); //NOT SURE
+    temp->findMax(temp->getKey(), temp->amount + sum); //NOT SURE
     this->calcHeight();
     temp->calcHeight();
     return temp;
@@ -562,14 +563,15 @@ RankNode<T, Cond> *RankNode<T, Cond>::roll_RR(int sum) {
         BL = this->left->rank;
     this->rank = AL + BL + 1;
     temp->rank = AR + this->rank + 1;
-    int oldTemp = temp->extra;
+//    int oldTemp = temp->extra;
+    temp->updateAmount();
     temp->extra += this->extra;
     this->extra -= temp->extra;
     if (temp->left != nullptr)
         temp->left->extra -= this->extra;
     temp->left = this;
     this->findMax(this->getKey(), this->amount + sum);
-    temp->findMax(temp->getKey(), oldTemp + temp->amount + sum);
+    temp->findMax(temp->getKey(),  temp->amount + sum);
     this->calcHeight();
     temp->calcHeight();
     return temp;
