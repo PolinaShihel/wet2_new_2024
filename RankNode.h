@@ -524,20 +524,6 @@ RankNode<T, Cond> *RankNode<T, Cond>::rotate(int sum) {
 template<class T, class Cond>
 RankNode<T, Cond> *RankNode<T, Cond>::roll_LL(int sum) {
     RankNode<T, Cond> *temp = left;
-//    this->amount += this->extra;
-//    if(this->right != nullptr)
-//        this->right->extra += this->extra;
-//    if(this->left != nullptr)
-//        this->left->extra += this->extra;
-//    this->extra = 0;
-//
-//    temp->amount += temp->extra;
-//    if(temp->right != nullptr)
-//        temp->right->extra += temp->extra;
-//    if(temp->left != nullptr)
-//        temp->left->extra += temp->extra;
-//    temp->extra = 0;
-
     int AL = 0, AR = 0, BR = 0;
     if (temp->right != nullptr)
         AR = temp->right->rank;
