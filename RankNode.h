@@ -454,8 +454,10 @@ RankNode<T, Cond> *RankNode<T, Cond>::deleteNode(const Cond &newKey, int sum) {
                     this->left->extra += this->extra;
                     toSwap = this->left;
                     temp = this->left->left;
-                    this->left->left = this;
                     this->left->right = this->right;
+                    toSwap->updateAmount();
+                    toSwap->findMax(toSwap->getKey(), toSwap->amount);
+                    this->left->left = this;
                     this->right = nullptr;
                     this->left = temp;
                     tempRank = toSwap->rank;
